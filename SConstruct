@@ -13,7 +13,7 @@ include = [lhapdfinc, cubaSrc + "/include"]
 includeflags = []
 for i in include: includeflags.append('-I' + i)
 
-source  = ["main.cpp", "crossSection.cpp", "MomentumSet.cpp"]
+source  = ["main.cpp", "crossSection.cpp", "MomentumSet.cpp", "phaseSpace.cpp"]
 libpath = [cubaSrc + "/lib", lhapdflib]
 libs    = ['cuba', 'm', 'LHAPDF']
 ccflags = includeflags

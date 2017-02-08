@@ -2,7 +2,7 @@
 #include "boost/multi_array.hpp"
 
 //typedef double momentum_t[4];
-struct momentum_t {
+struct momentum_t  {
     double E;
     double px;
     double py;
@@ -13,7 +13,7 @@ struct momentum_t {
 typedef std::complex <double> cplx;
 typedef boost::multi_array<cplx, 2> cplx_array;
   
-cplx_array spinorA(boost::extents[3][4]);
+//cplx_array spinorA(boost::extents[3][4]);
 
 class MomentumSet {
    public:
