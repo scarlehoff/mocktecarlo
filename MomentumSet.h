@@ -1,7 +1,15 @@
 #include <complex>
 #include "boost/multi_array.hpp"
 
-typedef double momentum_t[4];
+//typedef double momentum_t[4];
+struct momentum_t {
+    double E;
+    double px;
+    double py;
+    double pz;
+
+};
+
 typedef std::complex <double> cplx;
 typedef boost::multi_array<cplx, 2> cplx_array;
   
@@ -16,9 +24,13 @@ class MomentumSet {
       double x1, x2, shat;
       momentum_t *pset;
 
+      // Getter
       cplx zA(int i, int j);
       cplx zB(int i, int j);
-      double   s(int i, int j);
+      double s(int i, int j);
+
+      // Debug
+      void printAll();
 
       // Destructor
       void cleanmem();
