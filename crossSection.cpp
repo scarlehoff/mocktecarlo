@@ -14,7 +14,7 @@ int crossSection(const int *ndim, const cubareal x[], const int *ncomp, cubareal
    // Generate phase space point from cuba x[]
    MomentumSet pset = phaseSpace(n, s, x);
    
-   // Check whether the point goes through all cuts
+   // Check whether the point goes through all cuts (Check the momentum is not null, if it is then return)
    
    // Compute Matrix Element from it
    

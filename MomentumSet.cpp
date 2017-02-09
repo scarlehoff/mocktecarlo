@@ -1,11 +1,9 @@
-#include <algorithm>
+#include "MomentumSet.h"
 #include <string.h>
 #include <iostream>
 
-#include "MomentumSet.h"
 
 using namespace std;
-
 // Constructor
 MomentumSet::MomentumSet( int n_in, momentum_t p_in[] ) {
    npar    = n_in;
