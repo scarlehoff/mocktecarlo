@@ -47,7 +47,7 @@ int main() {
    const string setname = "MSTW2008nnlo90cl";
    const int imem = 0;
    const PDF* pdf = mkPDF(setname, imem);
-   double alpha_s = pdf->alphasQ2(pow(125.0,2));
+   double alpha_s = pdf->alphasQ2(pow(125.0,2)); // necessary for LHAPDF to work multicore?
 
    Vegas(ndim, ncomp,
          crossSection, &pdf, nvec,
