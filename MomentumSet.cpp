@@ -18,30 +18,30 @@ MomentumSet::MomentumSet(const int n_in, const vector<FourMomentum> p_in, const 
    pset.reserve(p_in.size());
    copy(p_in.begin(), p_in.end(), back_inserter(pset));
 
-   compute_spinors();
+//   compute_spinors();
    ifail = 0;
 }
 
 // Getters
-cplx MomentumSet::zA(int ii, int ij) {
-   int i = ii - 1;
-   int j = ij - 1;
-   cplx_array spinorA(boost::extents[npar][npar]);
+const cplx MomentumSet::zA(const int i, const int j) {
+   int ii = i - 1;
+   int ij = j - 1;
+//   cplx_array spinorA(boost::extents[npar][npar]);
 //   return spinorA[i][j];
-   return eval_zA(i,j);
+   return eval_zA(ii,ij);
 }
-cplx MomentumSet::zB(int ii, int ij) {
-   cplx_array spinorA(boost::extents[npar][npar]);
+const cplx MomentumSet::zB(const int i, const int j) {
    double ss = 1.0;
-   int i = ii - 1;
-   int j = ij - 1;
    if (i < 3) ss = - ss;
    if (j < 3) ss = - ss;
+//   cplx_array spinorA(boost::extents[npar][npar]);
 //   return - ss*conj(spinorA[i][j]);
-   return - ss*eval_zA(i,j);
+   int ii = i - 1;
+   int ij = j - 1;
+   return - ss*conj(eval_zA(ii,ij));
 }
-double MomentumSet::s(int i, int j) {
-   cplx res = (zA(i,j)*zB(i,j));
+const double MomentumSet::s(const int i, const int j) {
+   cplx res = (zA(i,j)*zB(j,i));
    return res.real();
 }
 
@@ -49,7 +49,6 @@ double MomentumSet::s(int i, int j) {
 void MomentumSet::printAll() {
    cout << "----DEBUG-----" << endl;
    cout << "Momentum Set:" << endl;
-   momentum_t a = { 1.0,2.0,3.0,5.0 }; 
    for (int i = 0; i < npar; i++) {
       cout << "p[" << (i+1) << "] : " << pset[i] << endl;
    }
@@ -81,7 +80,7 @@ void MomentumSet::compute_spinors() {
       }
    }
 }
-cplx MomentumSet::eval_zA(int i, int j) {
+const cplx MomentumSet::eval_zA(int i, int j) {
    cplx zi = cplx(0.0, 1.0);
    FourMomentum *a, *b;
    a = &(pset[i]);

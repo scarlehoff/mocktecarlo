@@ -4,16 +4,6 @@
 #include "boost/multi_array.hpp"
 #include "FourVector.h"
 
-//typedef double momentum_t[4];
-struct momentum_t  {
-    // todo: Make it a child of "4-vector"
-    double E;
-    double px;
-    double py;
-    double pz;
-
-};
-
 typedef std::complex <double> cplx;
 typedef boost::multi_array<cplx, 2> cplx_array;
   
@@ -31,9 +21,9 @@ class MomentumSet {
       std::vector <FourMomentum> pset;
 
       // Getter
-      cplx zA(int i, int j);
-      cplx zB(int i, int j);
-      double s(int i, int j);
+      const cplx zA(const int i, const int j);
+      const cplx zB(const int i, const int j);
+      const double s(const int i, const int j);
 
       // Debug
       void printAll();
@@ -45,7 +35,7 @@ class MomentumSet {
       cplx_array spinorA;
       void compute_spinors();
       void apply_cuts();
-	   cplx eval_zA(int i, int j);
+	   const cplx eval_zA(int i, int j);
 };
 
 

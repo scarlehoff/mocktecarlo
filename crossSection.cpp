@@ -4,6 +4,7 @@
 #include <LHAPDF/LHAPDF.h>
 #include "phaseSpace.h" 
 #include "MomentumSet.h" 
+#include "matrixElement.h"
 
 #define FBGEV2 389379365600
 
@@ -21,21 +22,23 @@ int crossSection(const int *ndim, const cubareal x[], const int *ncomp, cubareal
       f[0] = 0.0;
       return 0;
    }
+   
+   // Check whether the point goes through all cuts (Check the momentum is not null, if it is then return)
+   
+   // Compute Matrix Element from it
+   double mesq = matrixElement(&pset);
+   
+   // Compute the PDFs
    double f1 = (*((PDF **) pdf))->xfxQ2(2, pset.x1, pow(125.0,2));
    f1 += (*((PDF **) pdf))->xfxQ2(4, pset.x1, pow(125.0,2));
    double f2 = (*((PDF **) pdf))->xfxQ2(1, pset.x2, pow(125.0,2));
    f2 += (*((PDF **) pdf))->xfxQ2(3, pset.x2, pow(125.0,2));
    double pdfval = f1*f2/pset.x1/pset.x2;
    
-   // Check whether the point goes through all cuts (Check the momentum is not null, if it is then return)
-   
-   // Compute Matrix Element from it
-   double mesq = 1.0;
-   
-   // Compute the PDFs
-   
-   // Compute flux factor for this ps point
-   double flux = FBGEV2/pset.s(1,2)/2.0;
+   // Compute flux factor for this ps point and QCD factor (cte)
+   pset.weight = pset.weight/pset.s(1,2);
+   double qcdfactor = 1.0702411577062499E-004;
+   double flux = qcdfactor*FBGEV2/2.0;
 
    // Put everything together
    if (UNIT_PHASE) {
