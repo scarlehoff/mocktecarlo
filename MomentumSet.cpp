@@ -23,16 +23,22 @@ MomentumSet::MomentumSet(const int n_in, const vector<FourMomentum> p_in, const 
 }
 
 // Getters
-cplx MomentumSet::zA(int i, int j) {
+cplx MomentumSet::zA(int ii, int ij) {
+   int i = ii - 1;
+   int j = ij - 1;
    cplx_array spinorA(boost::extents[npar][npar]);
-   return spinorA[i][j];
+//   return spinorA[i][j];
+   return eval_zA(i,j);
 }
-cplx MomentumSet::zB(int i, int j) {
+cplx MomentumSet::zB(int ii, int ij) {
    cplx_array spinorA(boost::extents[npar][npar]);
    double ss = 1.0;
-   if (i < 2) ss = - ss;
-   if (j < 2) ss = - ss;
-   return - ss*conj(spinorA[i][j]);
+   int i = ii - 1;
+   int j = ij - 1;
+   if (i < 3) ss = - ss;
+   if (j < 3) ss = - ss;
+//   return - ss*conj(spinorA[i][j]);
+   return - ss*eval_zA(i,j);
 }
 double MomentumSet::s(int i, int j) {
    cplx res = (zA(i,j)*zB(i,j));
@@ -69,7 +75,8 @@ void MomentumSet::compute_spinors() {
    for (int i = 0; i < (npar-1) ; i++) {
       spinorA[0][0] = 0.0;
       for (int j = (i + 1); j < npar; j++) {
-         spinorA[i][j] = 0.0 ; // eval_zA(i,j);
+         spinorA[i][j] = eval_zA(i,j);
+//         cout << i << j << " " << spinorA[i][j] << endl;
          spinorA[j][i] = - spinorA[i][j];
       }
    }
@@ -80,36 +87,41 @@ cplx MomentumSet::eval_zA(int i, int j) {
    a = &(pset[i]);
    b = &(pset[j]);
 
+//   cout << i << ": " << (*a) << endl;
+//   cout << j << ": " << (*b) << endl;
+
    double at2, at, ap, am;
    cplx zea;
-   at2 = pow((*a).px,2) + pow((*a).py,2);
+   at2 = pow(a->px, 2) + pow(a->py, 2);
    at  = sqrt(at2);
-   ap  = (*a).E + (*a).pz;
-   am  = (*a).E - (*a).pz;
+   ap  = a->E + a->pz;
+   am  = a->E - a->pz;
 
-   if ( ap < ((*a).E/2.0) ) ap = at2 / am ;
-   if ( am < ((*a).E/2.0) ) am = at2 / ap ;
+   if ( ap < (a->E/2.0) ) ap = at2 / am ;
+   if ( am < (a->E/2.0) ) am = at2 / ap ;
 
    if ( at == 0.0 ) {
-      zea = 0.0;
+      zea = {1.0, 0.0} ;
    } else {
-      zea = ( (*a).px + zi*(*a).py ) /at;
+      zea = {a->px, a->py};
+      zea = zea/at;
    }
 
    double bt2, bt, bp, bm;
    cplx zeb;
-   bt2 = pow((*b).px,2) + pow((*b).py,2);
+   bt2 = pow(b->px, 2) + pow(b->py, 2);
    bt  = sqrt(bt2);
-   bp  = (*b).E + (*b).pz;
-   bm  = (*b).E - (*b).pz;
+   bp  = b->E + b->pz;
+   bm  = b->E - b->pz;
 
-   if ( bp < ((*b).E/2.0) ) bp = bt2 / bm ;
-   if ( bm < ((*b).E/2.0) ) bm = bt2 / bp ;
+   if ( bp < (b->E/2.0) ) bp = bt2 / bm ;
+   if ( bm < (b->E/2.0) ) bm = bt2 / bp ;
 
    if ( bt == 0.0 ) {
-      zeb = 0.0 ;
+      zeb = {1.0, 0.0} ;
    } else {
-      zeb = ( (*b).px + zi*(*b).py ) /bt ;
+      zeb = {b->px, b->py};
+      zeb = zeb/bt;
    }
 
    cplx res = sqrt(am*bp)*zea - sqrt(ap*bm)*zeb;

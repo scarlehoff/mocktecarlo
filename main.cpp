@@ -1,11 +1,11 @@
 #include <iostream>
 #include <fstream>
 #include <cuba.h>
-//#include <LHAPDF/LHAPDF.h>
+#include <LHAPDF/LHAPDF.h>
 
 
 using namespace std;
-//using namespace LHAPDF;
+using namespace LHAPDF;
 
 #include "crossSection.h"
 
@@ -13,11 +13,9 @@ using namespace std;
 int testRecipe(const int *ndim, const cubareal x[], const int *ncomp, cubareal f[], void *userdata);
 
 int main() {
-   // "User defined input"
-   double mu = 125.0;
    // ----- Vegas variables
-   int ncomp = 1;
    int userdata = 0;
+   int ncomp = 1;
    int nvec = 1;
    int spin = 0;
    int neval, fail;
@@ -26,26 +24,33 @@ int main() {
    // Dimensionality
    int ndim = 9;
    // Error Tolerance
-   double epsrel = 1e-3;
-   double epsabs = 1e-4;
+   double epsrel = 1e-6;
+   double epsabs = 1e-6;
    // Integration parameters
    int seed = 0;
    int mineval = 0;
-   int maxeval = 500000;
-   int nstart = 10000;
-   int nincrease = 5000;
-   int nbatch = 10000;
+   // cluster
+   int maxeval = 50000000;
+   int nstart = 1000000;
+   int nincrease = 500000;
+   int nbatch = 1000000;
+   // desktop
+//   int maxeval = 500000;
+//   int nstart = 10000;
+//   int nincrease = 5000;
+//   int nbatch = 10000;
+   // --- 
    int gridno = 0;
    cubareal integral[ncomp], error[ncomp], prob[ncomp];
 
    // PDF for alpha_s
-//   const string setname = "MSTW2008nnlo90cl";
-//   const int imem = 0;
-//   const PDF* pdf = mkPDF(setname, imem);
-//   double alpha_s = pdf->alphasQ2(pow(mu,2));
+   const string setname = "MSTW2008nnlo90cl";
+   const int imem = 0;
+   const PDF* pdf = mkPDF(setname, imem);
+   double alpha_s = pdf->alphasQ2(pow(125.0,2));
 
    Vegas(ndim, ncomp,
-         crossSection, &userdata, nvec,
+         crossSection, &pdf, nvec,
 //         testRecipe, &userdata, nvec,
          epsrel, epsabs,
          verbose, seed,

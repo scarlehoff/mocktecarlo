@@ -8,7 +8,7 @@
 
 
 
-#define UNIT_PHASE 1
+#define UNIT_PHASE 0
 #define DEBUG 0
 #define COSTHMIN -1.0
 #define COSTHMAX 1.0
@@ -23,7 +23,7 @@ typedef boost::multi_array<double, 2> matrix;
 MomentumSet phaseSpace(const int npar, const double s_input, const cubareal x[]);
 
 // Sampling functions
-double generateInwa(const int itype, const double r, const double shat, double *wtps);
+double generateInwa(const int itype, const double r, const double shat, const double mh, double *wtps);
 double pickRand(const int itype, const double r, const double smax, const double smin, double *wtps);
 
 // Generate 4-Momenta

@@ -7,18 +7,28 @@ using namespace std;
 MomentumSet phaseSpace(int npar, double s_input, const cubareal x[]) {
    // Weight
    double wtps = 1.0;
+   double mh   = 125.0;
+   double mh2  = pow(mh, 2);
 
-   // Generate shat from x[0], x[1] "naively"
-   double x1 = x[0];
-   double x2 = x[1];
+   // Generate shat from x[0], x[1] 
+   double taumin = mh2 / s_input;
+   double taumax = 1.0;
+   double tau    = pickRand(2, taumin, taumax, x[0], &wtps);
+   double x1     = pow(tau, x[1]);
+   double x2     = tau/x1;
+   wtps = -wtps*log(tau);
    if (UNIT_PHASE) {
-      x1 = 1.0;
-      x2 = 1.0;
+      x1   = 1.0;
+      x2   = 1.0;
+      wtps = 1.0;
    }
    double shat = x1*x2*s_input;
 
    // Generate Higgs mass and photons 1 and 2 from x[2], x[3], x[4]
-   double shiggs = generateInwa(4, x[2], shat, &wtps);
+   if ( mh2 >= shat ) {
+      return MomentumSet(0);
+   }
+   double shiggs = generateInwa(4, x[2], shat, mh, &wtps);
    double gamcos = pickRand(1, COSTHMIN, COSTHMAX, x[3], &wtps);
    double gamphi = pickRand(1, PHIMIN, PHIMAX, x[4], &wtps);
    wtps = wtps/2.0/M_PI;
@@ -81,7 +91,7 @@ MomentumSet phaseSpace(int npar, double s_input, const cubareal x[]) {
 }
 
 // Sampling functions
-double generateInwa(const int itype, const double r, const double shat, double *wtps) {
+double generateInwa(const int itype, const double r, const double shat, double mh, double *wtps) {
    double s12 = 0.0;
    if (UNIT_PHASE) {
       double smin = y0*shat;
@@ -93,7 +103,7 @@ double generateInwa(const int itype, const double r, const double shat, double *
       //        cout << r << endl;
       //        cout << s12 << endl;
    } else {
-      s12 = pow(125.0, 2);
+      s12 = pow(mh, 2);
       *wtps = (*wtps) * pow(4.0*M_PI, 2);
    }
    return s12;
@@ -347,10 +357,6 @@ double gres(const double x, const double y, const double z, const double u, cons
    glimits(x, y, z, u, v, w, &yp, &ym);
    return x*(y-yp)*(y-ym);
 }
-
-
-
-
 
 // General utilities
 double dlambda(const double a, const double b, const double c) {
