@@ -13,10 +13,10 @@ include = [lhapdfinc, cubaSrc + "/include"]
 includeflags = []
 for i in include: includeflags.append('-I' + i)
 
-source  = ["main.cpp", "crossSection.cpp", "MomentumSet.cpp", "phaseSpace.cpp"]
+source  = ["main.cpp", "crossSection.cpp", "MomentumSet.cpp", "phaseSpace.cpp", "FourVector.cpp"]
 libpath = [cubaSrc + "/lib", lhapdflib]
 libs    = ['cuba', 'm', 'LHAPDF']
-ccflags = includeflags
+ccflags = includeflags + ["-std=c++11"]
 
 env = Environment(CCFLAGS = ccflags, LIBS = libs, LIBPATH = libpath)
 env.Program(target = target, source = source)
