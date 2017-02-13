@@ -5,7 +5,6 @@ double matrixElement(MomentumSet *pset) {
    switch (pset->npar) {
       case 6:
          return C0g0WFH(pset);
-         break;
       case 7:
          return C1g0WFH(pset);
    }
@@ -38,10 +37,29 @@ double C1g0WFHs0(int i1, int i5, int i3, int i2, int i4, MomentumSet *pset) {
    double s1i = pset->s(i1,i4);
    double s1k = pset->s(i1,i5);
    double sik = pset->s(i4,i5);
-   double s2j = pset->s(i2,i4);
+   double s2j = pset->s(i2,i3);
+   double q1  = s1i + s1k + sik;
+
+   double prop = propagatorVBF(q1, s2j, 1);
+
+   // Amplitude
+   // g+
+   cplx z1p   = pset->zA(i1,i4) * pset->zB(i3,i4);
+   cplx z2p   = pset->zA(i1,i5) * pset->zB(i3,i5);
+   cplx ztp   = pset->zA(i1,i2) / pset->zA(i4,i5) / pset->zA(i1,i5);
+   cplx zampp = ztp *(z1p + z2p);
+   // g-
+   cplx z1m   = pset->zB(i1,i4) * pset->zA(i1,i2);
+   cplx z2m   = pset->zB(i4,i5) * pset->zA(i2,i5);
+   cplx ztm   = pset->zB(i4,i3) / pset->zB(i4,i5) / pset->zB(i1,i5);
+   cplx zampm = ztm *(z1m + z2m);
+
+   double amp = pow(abs(zampp),2) + pow(abs(zampm),2);
+   
+   return 2.0*amp*prop;
 }
 
-
+// 2 -> 6
 
 
 // Propagators

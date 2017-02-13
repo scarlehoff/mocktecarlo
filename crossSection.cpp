@@ -60,7 +60,7 @@ int crossSection(const int *ndim, const cubareal x[], const int *ncomp, cubareal
             qcdfactor = qcdborn;
             break;
          case 7:
-            qcdfactor = qcdborn*NC*(4.0*M_PI*alpha_s);
+            qcdfactor = qcdborn*(4.0*M_PI*alpha_s)*(NC*NC-1.0)/NC ;
             break;
       }
       double flux = average*qcdfactor*FBGEV2/2.0/pset.s(1,2);

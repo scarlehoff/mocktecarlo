@@ -24,6 +24,7 @@ int main() {
    // Dimensionality
 //   int ndim = 9; // n = 6
    int ndim = 12; // n = 7
+//   int ndim = 15; // n = 8
    // Error Tolerance
    double epsrel = 1e-6;
    double epsabs = 1e-6;
