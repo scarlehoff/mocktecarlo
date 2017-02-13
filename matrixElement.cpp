@@ -6,10 +6,13 @@ double matrixElement(MomentumSet *pset) {
       case 6:
          return C0g0WFH(pset);
          break;
+      case 7:
+         return C1g0WFH(pset);
    }
 }
 
 // Amplitudes
+// 2 -> 4
 double C0g0WFH(MomentumSet *pset) {
    int i1 = 2; int i2 = 1; int i3 = 3; int i4 = 4;
 
@@ -23,6 +26,23 @@ double C0g0WFH(MomentumSet *pset) {
    double amp = pow(abs(zamp), 2);
    return 2.0*amp*prop;
 }
+// 2 -> 5
+double C1g0WFH(MomentumSet *pset) {
+   int i1 = 2; int i2 = 1; int i3 = 4; int i4 = 5; int i5 = 3;
+   double a1 = C1g0WFHs0(i1, i5, i3, i2, i4, pset);
+   double a2 = C1g0WFHs0(i2, i5, i4, i1, i3, pset);
+   return a1 + a2;
+}
+
+double C1g0WFHs0(int i1, int i5, int i3, int i2, int i4, MomentumSet *pset) {
+   double s1i = pset->s(i1,i4);
+   double s1k = pset->s(i1,i5);
+   double sik = pset->s(i4,i5);
+   double s2j = pset->s(i2,i4);
+}
+
+
+
 
 // Propagators
 

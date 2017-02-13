@@ -8,16 +8,23 @@ from subprocess import check_output
 ## Lhapdf 
 lhapdflib  = check_output(["lhapdf-config", "--libdir"]).strip()
 lhapdfinc  = check_output(["lhapdf-config", "--incdir"]).strip()
+## Fastjet
+fastjetsrc = check_output(["fastjet-config", "--prefix"]).strip()
+fastjetlib = fastjetsrc + "/lib"
+fastjetinc = fastjetsrc + "/include"
+fastjetlf  = ["fastjettools", "fastjet", "fastjetplugins", "siscone", "siscone_spherical"]
 
-include = [lhapdfinc, cubaSrc + "/include"]
+## Generate include flags
+include = [lhapdfinc, cubaSrc + "/include", fastjetinc]
 includeflags = []
 for i in include: includeflags.append('-I' + i)
 
 source  = ["main.cpp", "crossSection.cpp", "MomentumSet.cpp", 
            "phaseSpace.cpp", "FourVector.cpp", "matrixElement.cpp"]
-libpath = [cubaSrc + "/lib", lhapdflib]
-libs    = ['cuba', 'm', 'LHAPDF']
-ccflags = includeflags + ["-std=c++11"]
+libpath = [cubaSrc + "/lib", lhapdflib, fastjetlib]
+libs    = ['cuba', 'm', 'LHAPDF'] + fastjetlf
+ccflags = includeflags + ["-std=c++11"] 
+
 
 env = Environment(CCFLAGS = ccflags, LIBS = libs, LIBPATH = libpath)
 env.Program(target = target, source = source)

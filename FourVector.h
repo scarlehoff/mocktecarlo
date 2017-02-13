@@ -41,6 +41,7 @@ class FourMomentum : public FourVector {
       double &pz = FourVector::z;
       double &E  = FourVector::t;
       double *p[4]; // Array of pointers towards [E, px, py, pz]
+      double pt, pt2, yrap, phi;
 
       // Constructor
       FourMomentum();
@@ -54,6 +55,9 @@ class FourMomentum : public FourVector {
       // Utilities
       matrix boost_matrix();
       matrix unboost_matrix();
+
+      // Kinematical variables
+      double computeKin();
 
       // Todo, overload matrix * fourvector instead
       void transformation(matrix mat);

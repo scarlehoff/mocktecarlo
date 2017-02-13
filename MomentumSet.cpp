@@ -1,7 +1,7 @@
 #include "MomentumSet.h"
 #include <string.h>
 #include <iostream>
-
+#include "fastjet/ClusterSequence.hh"
 
 using namespace std;
 // Constructor
@@ -34,6 +34,7 @@ const cplx MomentumSet::zB(const int i, const int j) {
    double ss = 1.0;
    if (i < 3) ss = - ss;
    if (j < 3) ss = - ss;
+// This is broken at the moment I don't know why: Todo
 //   cplx_array spinorA(boost::extents[npar][npar]);
 //   return - ss*conj(spinorA[i][j]);
    int ii = i - 1;
@@ -130,4 +131,57 @@ const cplx MomentumSet::eval_zA(int i, int j) {
    return res;
 }
 
-// Private functions: cuts
+// Public functions: cuts
+int MomentumSet::apply_cuts(const double ptcut, const  double rkt, const int minjet) {
+   using namespace fastjet;
+   // Copy the jets we care about to fastjet
+   vector <PseudoJet> particles;
+   for (int i = 2; i < (npar - 2); i++) {
+      particles.push_back(PseudoJet(pset[i].px, pset[i].py, pset[i].pz, pset[i].E));
+   }
+   // Define jets
+   JetDefinition jet_def(antikt_algorithm, rkt);
+
+   // Run the clustering and get the jets back sorted by pt
+   ClusterSequence cs(particles, jet_def);
+   vector <PseudoJet> jets = sorted_by_pt(cs.inclusive_jets());
+
+   // Do we have enough jets?
+   njets = jets.size();
+   if (njets < minjet) return 1;
+
+   // And do they have enough pt?
+   for (int i = 0; i < jets.size(); i++) {
+      if (jets[i].pt() < ptcut) njets -= 1;
+   }
+   if (njets < minjet) return 1;
+
+   return 0;
+   // user fastjet 
+   // anti-kt
+   // Create the diB array:
+//   vector <double> diB[2];
+//   njets = 0;
+//   for (int i = 2; i < (npar-2); i++) {
+//      pset[i].computeKin();
+//      diB = 1.0/pset[i].pt2;
+//      if (pset[i].pt >= ptcut) njets += 1;
+//   } // Check whether there is enough pt to go through the cuts while you are at it
+//   if (minjet > njets) return 1;
+//
+//   // Now let's go through the actual antikt
+//   double dij;
+//   double dmin = *min_element(diB.begin(), diB.end());
+//   for (int i = 2; i < (npar-3); i++) {
+//      for (int j = 3; i < (npar-2); i++) {
+//         deltaij = pow(pset[i].yrap-pset[j].yrap,2) + pow(pset[i].phi-pset[j].phi,2);
+//         dij     = min(1.0/pset[i].pt2, 1.0/pset[j].pt2) * deltaij/pow(rmin,2);
+//         // Is the smallest dij smaller than diB?
+//         if (dij < dmin) {
+//            njets -= 1;
+//         }
+//      }
+//   }
+//   if (minjet > njets) return 1;
+//   return 0;
+}

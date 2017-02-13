@@ -20,6 +20,8 @@ class MomentumSet {
       double x1, x2, weight;
       std::vector <FourMomentum> pset;
 
+      int apply_cuts(const double ptcut, const double rkt, const int minjets);
+
       // Getter
       const cplx zA(const int i, const int j);
       const cplx zB(const int i, const int j);
@@ -34,7 +36,6 @@ class MomentumSet {
    private:
       cplx_array spinorA;
       void compute_spinors();
-      void apply_cuts();
 	   const cplx eval_zA(int i, int j);
 };
 

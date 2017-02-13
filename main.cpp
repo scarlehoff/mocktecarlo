@@ -22,7 +22,8 @@ int main() {
    int verbose = 2;
    char statefile[1] = "";
    // Dimensionality
-   int ndim = 9;
+//   int ndim = 9; // n = 6
+   int ndim = 12; // n = 7
    // Error Tolerance
    double epsrel = 1e-6;
    double epsabs = 1e-6;

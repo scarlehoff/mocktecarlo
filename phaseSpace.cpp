@@ -5,6 +5,9 @@
 using namespace std;
 
 MomentumSet phaseSpace(int npar, double s_input, const cubareal x[]) {
+   // Parameter
+   int nrand_p3 = 5;
+   int nrand_out = nrand_p3 + 4;
    // Weight
    double wtps = 1.0;
    double mh   = 125.0;
@@ -36,9 +39,23 @@ MomentumSet phaseSpace(int npar, double s_input, const cubareal x[]) {
 
    // generate the 2 -> 3 system from x[5], x[6], x[7], x[8]
    vector <FourMomentum> pset;
+   double s1, s2;
    pset.reserve(5);
+   switch (npar) {
+      case 6:
+         s1 = 0.0;
+         s2 = 0.0;
+         break;
+      case 7:
+         double smin = y0*shat;
+         double smax = pow(sqrt(shat) - sqrt(shiggs), 2) - smin;
+         if (smax <= smin) return MomentumSet(0);
+         s1 = pickRand(2, smin, smax, x[nrand_out], &wtps);
+         s2 = 0.0;
+         break;
+   }
    // input x[5:8], s[1:4], 
-   int ipass = p3generic_nj(x, 5, shat, 0.0, shiggs, 0.0, &pset, &wtps);
+   int ipass = p3generic_nj(x, nrand_p3, shat, s1, shiggs, s2, &pset, &wtps);
    if ( ipass != 1 ) {
       // Bad phasespace point
       return MomentumSet(ipass);
@@ -71,6 +88,20 @@ MomentumSet phaseSpace(int npar, double s_input, const cubareal x[]) {
       cout << pg2 << endl;
    }
 
+   // Decay any of the blobs coming out from p3generic (if necessary)
+   FourMomentum pout1, pout2;
+   switch (npar) {
+      case 6:
+         break;
+      case 7:
+         double cos14 = pickRand(1, COSTHMIN, COSTHMAX, x[nrand_out + 1], &wtps);
+         double phi14 = pickRand(1, PHIMIN, PHIMAX, x[nrand_out + 2], &wtps);
+         wtps = wtps/pow(4.0*M_PI, 3);
+         makePs2cm_nj(s1, cos14, phi14, 0.0, 0.0, &pout1, &pout2);
+         pout1.transformation(pset[2].unboost_matrix());
+         pout2.transformation(pset[2].unboost_matrix());
+   }
+
    // All done, generate the momentum set
    vector <FourMomentum> p_out;
    p_out.reserve(npar);
@@ -81,6 +112,10 @@ MomentumSet phaseSpace(int npar, double s_input, const cubareal x[]) {
          p_out.emplace_back(pset[2]);
          p_out.emplace_back(pset[4]);
          break;
+      case 7:
+         p_out.emplace_back(pout1);
+         p_out.emplace_back(pout2);
+         p_out.emplace_back(pset[4]);
    }
 
    p_out.emplace_back(pg1);

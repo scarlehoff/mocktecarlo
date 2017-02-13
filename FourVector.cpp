@@ -115,6 +115,21 @@ void FourMomentum::transformation(matrix mat) {
    return;
 }
 
+double FourMomentum::computeKin() {
+   // pt
+   double ptx = px;
+   double pty = py;
+   pt2 = px*px + py*py;
+   pt  = sqrt(pt2);
+   // rapidity
+   double yp = E + pz;
+   double ym = E - pz;
+   yrap = log(yp/ym)/2.0;
+   // azimth
+   phi  = atan(py/px);
+
+}
+
 // Overrides
 FourMomentum FourMomentum::operator * (const double k) const { return FourMomentum(k*x,k*y,k*z,k*t); }
 FourMomentum FourMomentum::operator / (const double k) const { return FourMomentum(x/k,y/k,z/k,t/k); }
