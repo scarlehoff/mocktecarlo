@@ -9,7 +9,8 @@ MomentumSet::MomentumSet(const int error) {
    ifail = 1;
 }
 
-MomentumSet::MomentumSet(const int n_in, const vector<FourMomentum> p_in, const double wt, const double x_1, const double x_2) {
+MomentumSet::MomentumSet(const int n_in, const vector<FourMomentum> p_in, const double wt, const double x_1, const double x_2)
+  : spinorA(boost::extents[n_in][n_in]) {
    npar    = n_in;
    weight  = wt;
    x1      = x_1;
@@ -18,7 +19,7 @@ MomentumSet::MomentumSet(const int n_in, const vector<FourMomentum> p_in, const 
    pset.reserve(p_in.size());
    copy(p_in.begin(), p_in.end(), back_inserter(pset));
 
-//   compute_spinors();
+   compute_spinors();
    ifail = 0;
 }
 
@@ -26,20 +27,13 @@ MomentumSet::MomentumSet(const int n_in, const vector<FourMomentum> p_in, const 
 const cplx MomentumSet::zA(const int i, const int j) {
    int ii = i - 1;
    int ij = j - 1;
-//   cplx_array spinorA(boost::extents[npar][npar]);
-//   return spinorA[i][j];
-   return eval_zA(ii,ij);
+   return spinorA[ii][ij];
 }
 const cplx MomentumSet::zB(const int i, const int j) {
    double ss = 1.0;
    if (i < 3) ss = - ss;
    if (j < 3) ss = - ss;
-// This is broken at the moment I don't know why: Todo
-//   cplx_array spinorA(boost::extents[npar][npar]);
-//   return - ss*conj(spinorA[i][j]);
-   int ii = i - 1;
-   int ij = j - 1;
-   return - ss*conj(eval_zA(ii,ij));
+   return - ss * conj(zA(i,j));
 }
 const double MomentumSet::s(const int i, const int j) {
    cplx res = (zA(i,j)*zB(j,i));
@@ -71,12 +65,10 @@ void MomentumSet::printAll() {
 
 // Private functions: Spinors
 void MomentumSet::compute_spinors() {
-   cplx_array spinorA(boost::extents[npar][npar]);
    for (int i = 0; i < (npar-1) ; i++) {
       spinorA[0][0] = 0.0;
       for (int j = (i + 1); j < npar; j++) {
          spinorA[i][j] = eval_zA(i,j);
-//         cout << i << j << " " << spinorA[i][j] << endl;
          spinorA[j][i] = - spinorA[i][j];
       }
    }
