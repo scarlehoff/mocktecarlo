@@ -144,7 +144,7 @@ MomentumSet phaseSpace(int npar, double s_input, const cubareal x[]) {
          double phi56 = pickRand(1, PHIMIN, PHIMAX, x[nrand_out + 5], &wtps);
 
          wtps = wtps*sqrt(dlambda(s1, 0.0, s2))/s1/pow(4.0*M_PI, 3);
-         makePs2cm_nj(s2, cos56, phi56, 0.0, 0.0, &pout3, &pout3);
+         makePs2cm_nj(s2, cos56, phi56, 0.0, 0.0, &pout2, &pout3);
          pout2.transformation(ptemp.unboost_matrix());
          pout3.transformation(ptemp.unboost_matrix());
 
@@ -153,6 +153,7 @@ MomentumSet phaseSpace(int npar, double s_input, const cubareal x[]) {
          p_out.emplace_back(pout2);
          p_out.emplace_back(pout3);
          p_out.emplace_back(pset[4]);
+         break;
    }
 
    p_out.emplace_back(pg1);

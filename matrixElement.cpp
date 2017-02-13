@@ -7,6 +7,8 @@ double matrixElement(MomentumSet *pset) {
          return C0g0WFH(pset);
       case 7:
          return C1g0WFH(pset);
+      case 8:
+         return 1.0;
    }
 }
 
@@ -25,6 +27,7 @@ double C0g0WFH(MomentumSet *pset) {
    double amp = pow(abs(zamp), 2);
    return 2.0*amp*prop;
 }
+
 // 2 -> 5
 double C1g0WFH(MomentumSet *pset) {
    int i1 = 2; int i2 = 1; int i3 = 4; int i4 = 5; int i5 = 3;
@@ -60,6 +63,58 @@ double C1g0WFHs0(int i1, int i5, int i3, int i2, int i4, MomentumSet *pset) {
 }
 
 // 2 -> 6
+double C2g0WFH(MomentumSet *pset) {
+   int i1 = 2; int i2 = 1; int i3 = 5; int i4 = 6; int i5 = 3; int i6 = 4;
+   double nadj1 = C2g0WFHnadj(i1, i5, i4,  i3, i6, i2, pset);
+   double nadj2 = C2g0WFHnadj(i1, i6, i4,  i3, i5, i2, pset);
+   return nadj1 + nadj2;
+   double adj11 = C2g0WFHadj (i1, i5, i6, i3, i2, i4, pset);
+   double adj12 = C2g0WFHadj (i1, i6, i5, i3, i2, i4, pset);
+   double adj21 = C2g0WFHadj (i2, i5, i6, i4, i1, i3, pset);
+   double adj22 = C2g0WFHadj (i2, i6, i5, i4, i1, i3, pset);
+   return nadj1 + nadj2 + adj11 + adj12 + adj21 + adj22;
+}
+
+double C2g0WFHnadj(int i1, int i5, int i4, int i3, int i6, int i2, MomentumSet *pset) {
+   double s1i = pset->s(i1,i4);
+   double s1k = pset->s(i1,i5);
+   double sik = pset->s(i4,i5);
+   double s2j = pset->s(i2,i3);
+   double s2l = pset->s(i2,i6);
+   double sjl = pset->s(i3,i6);
+   double q1  = s1i + s1k + sik;
+   double q2  = s2j + s2l + sjl;
+   
+   double prop = propagatorVBF(q1, q2, 1);
+
+   // Amplitude
+   cplx zamp1p2p = 0.0;
+   cplx zamp1p2m = 0.0;
+   cplx zamp1m2p = 0.0;
+   cplx zamp1m2m = 0.0;
+
+   double amp = pow(abs(zamp1p2p), 2) + pow(abs(zamp1p2m), 2)
+              + pow(abs(zamp1m2p), 2) + pow(abs(zamp1m2m), 2);
+
+   return 2.0 * amp * prop;
+}
+
+double C2g0WFHadj(int i1, int i5, int i6, int i3, int i2, int i4, MomentumSet *pset) {
+   double s1i = pset->s(i1,i4);
+   double s1k = pset->s(i1,i5);
+   double s1l = pset->s(i1,i6);
+   double sik = pset->s(i4,i5);
+   double sil = pset->s(i4,i6);
+   double skl = pset->s(i5,i6);
+   double s2j = pset->s(i2,i3);
+   double q1  = s1k + s1l + s1i + skl + sik + sil;
+
+   double prop = propagatorVBF(q1, s2j, 1);
+
+   // Amplitude
+
+   return 1.0;
+}
 
 
 // Propagators

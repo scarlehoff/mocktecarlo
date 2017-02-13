@@ -15,7 +15,7 @@ using namespace std;
 using namespace LHAPDF;
 
 int crossSection(const int *ndim, const cubareal x[], const int *ncomp, cubareal f[], void *pdf) {
-   int n = NPARTICLES;
+   int n        = NPARTICLES;
    double roots = 8000.0;
    double muR   = 125.0 ; // muR = muF = mH
    double s     = pow(roots, 2);
@@ -37,10 +37,18 @@ int crossSection(const int *ndim, const cubareal x[], const int *ncomp, cubareal
       if(n > 6) minjets += 1;
       if(n > 7) minjets += 1;
       int ifail = pset.apply_cuts(ptcut, rkt, minjets);
+//      for (int i = 0 ; i < pset.npar ; i++) {
+//         cout << i << ": " << pset.pset[i] << endl;
+//      }
+//      cout << "do we ever get here?" << minjets << endl;
+//      cout << "ifail : " << ifail << endl;
+//      cout << "njets : " << pset.njets << endl;
+//      cin.ignore();
       if (ifail) {
          f[0] = 0.0;
          return 0;
       }
+      //
       // Compute Matrix Element from it
       //
       double mesq = matrixElement(&pset);
@@ -58,7 +66,7 @@ int crossSection(const int *ndim, const cubareal x[], const int *ncomp, cubareal
       double qcdborn = pow(4.0*M_PI*AMZ, 3)*NC*NC/2.0;
       double qcdfactor = qcdborn;
       if (n > 6) qcdfactor = qcdfactor*(4.0*M_PI*alpha_s)*(NC*NC-1.0)/NC ;
-      if (n > 7) qcdfactor = qcdfactor*NC/2.0;
+      if (n > 7) qcdfactor = qcdfactor*(4.0*M_PI*alpha_s)*NC/2.0;
 
       double flux = average*qcdfactor*FBGEV2/2.0/pset.s(1,2);
 
