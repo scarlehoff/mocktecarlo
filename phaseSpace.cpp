@@ -39,7 +39,7 @@ MomentumSet phaseSpace(int npar, double s_input, const cubareal x[]) {
 
    // generate the 2 -> 3 system from x[5], x[6], x[7], x[8]
    vector <FourMomentum> pset;
-   double s1, s2;
+   double s1, s2, smin, smax;
    pset.reserve(5);
    switch (npar) {
       case 6:
@@ -47,11 +47,18 @@ MomentumSet phaseSpace(int npar, double s_input, const cubareal x[]) {
          s2 = 0.0;
          break;
       case 7:
-         double smin = y0*shat;
-         double smax = pow(sqrt(shat) - sqrt(shiggs), 2) - smin;
+         smin = y0*shat;
+         smax = pow(sqrt(shat) - sqrt(shiggs), 2) - smin;
          if (smax <= smin) return MomentumSet(0);
          s1 = pickRand(2, smin, smax, x[nrand_out], &wtps);
          s2 = 0.0;
+         break;
+      case 8: // Triplecolinear case, this is the same for 7 and 8
+         smin = y0*shat;
+         smax = pow(sqrt(shat) - sqrt(shiggs), 2) - smin;
+         if (smax <= smin) return MomentumSet(0);
+         s1   = pickRand(2, smin, smax, x[nrand_out], &wtps);
+         s2   = 0.0;
          break;
    }
    // input x[5:8], s[1:4], 
@@ -88,33 +95,63 @@ MomentumSet phaseSpace(int npar, double s_input, const cubareal x[]) {
       cout << pg2 << endl;
    }
 
-   // Decay any of the blobs coming out from p3generic (if necessary)
-   FourMomentum pout1, pout2;
-   switch (npar) {
-      case 6:
-         break;
-      case 7:
-         double cos14 = pickRand(1, COSTHMIN, COSTHMAX, x[nrand_out + 1], &wtps);
-         double phi14 = pickRand(1, PHIMIN, PHIMAX, x[nrand_out + 2], &wtps);
-         wtps = wtps/pow(4.0*M_PI, 3);
-         makePs2cm_nj(s1, cos14, phi14, 0.0, 0.0, &pout1, &pout2);
-         pout1.transformation(pset[2].unboost_matrix());
-         pout2.transformation(pset[2].unboost_matrix());
-   }
-
    // All done, generate the momentum set
    vector <FourMomentum> p_out;
    p_out.reserve(npar);
    p_out.emplace_back(pset[0]);
    p_out.emplace_back(pset[1]);
+
+   // Todo: refactoring
+   double cos14, phi14;
+   FourMomentum pout1, pout2;
    switch (npar) {
       case 6:
          p_out.emplace_back(pset[2]);
          p_out.emplace_back(pset[4]);
          break;
+     // For n>6 decay of the blobs coming out from p3generic (if necessary)
       case 7:
+         cos14 = pickRand(1, COSTHMIN, COSTHMAX, x[nrand_out + 1], &wtps);
+         phi14 = pickRand(1, PHIMIN, PHIMAX, x[nrand_out + 2], &wtps);
+
+         wtps = wtps/pow(4.0*M_PI, 3);
+         makePs2cm_nj(s1, cos14, phi14, 0.0, 0.0, &pout1, &pout2);
+         pout1.transformation(pset[2].unboost_matrix());
+         pout2.transformation(pset[2].unboost_matrix());
+
+         // Store 
          p_out.emplace_back(pout1);
          p_out.emplace_back(pout2);
+         p_out.emplace_back(pset[4]);
+         break;
+      case 8:
+         FourMomentum pout3, ptemp;
+         cos14 = pickRand(1, COSTHMIN, COSTHMAX, x[nrand_out + 1], &wtps);
+         phi14 = pickRand(1, PHIMIN, PHIMAX, x[nrand_out + 2], &wtps);
+         // And now generate the second blob
+         smax = s1 - smin;
+         if (smax <= smin) return MomentumSet(0);
+         s2   = pickRand(2, smin, smax, x[nrand_out+3], &wtps);
+
+         // pinch out one of the particles (pout1) and generate the second blob (ptemp)
+         wtps = wtps/pow(4.0*M_PI, 3);
+         makePs2cm_nj(s1, cos14, phi14, s2, 0.0, &ptemp, &pout1);
+         ptemp.transformation(pset[2].unboost_matrix());
+         pout1.transformation(pset[2].unboost_matrix());
+
+         // separate the second blob into massless partons pout2, pout3
+         double cos56 = pickRand(1, COSTHMIN, COSTHMAX, x[nrand_out + 4], &wtps);
+         double phi56 = pickRand(1, PHIMIN, PHIMAX, x[nrand_out + 5], &wtps);
+
+         wtps = wtps*sqrt(dlambda(s1, 0.0, s2))/s1/pow(4.0*M_PI, 3);
+         makePs2cm_nj(s2, cos56, phi56, 0.0, 0.0, &pout3, &pout3);
+         pout2.transformation(ptemp.unboost_matrix());
+         pout3.transformation(ptemp.unboost_matrix());
+
+         // Store 
+         p_out.emplace_back(pout1);
+         p_out.emplace_back(pout2);
+         p_out.emplace_back(pout3);
          p_out.emplace_back(pset[4]);
    }
 

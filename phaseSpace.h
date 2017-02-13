@@ -8,7 +8,7 @@
 
 
 
-#define UNIT_PHASE 0
+#define UNIT_PHASE 1
 #define DEBUG 0
 #define COSTHMIN -1.0
 #define COSTHMAX 1.0

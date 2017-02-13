@@ -5,6 +5,7 @@
 #include "phaseSpace.h" 
 #include "MomentumSet.h" 
 #include "matrixElement.h"
+#include "crossSection.h"
 
 #define FBGEV2 389379365600
 #define NC 3.0
@@ -14,7 +15,7 @@ using namespace std;
 using namespace LHAPDF;
 
 int crossSection(const int *ndim, const cubareal x[], const int *ncomp, cubareal f[], void *pdf) {
-   int n = 7;
+   int n = NPARTICLES;
    double roots = 8000.0;
    double muR   = 125.0 ; // muR = muF = mH
    double s     = pow(roots, 2);
@@ -33,7 +34,8 @@ int crossSection(const int *ndim, const cubareal x[], const int *ncomp, cubareal
       double ptcut = 15; // GeV
       double rkt   = 0.5;
       int minjets  = 2;
-      if(n == 7) minjets += 1;
+      if(n > 6) minjets += 1;
+      if(n > 7) minjets += 1;
       int ifail = pset.apply_cuts(ptcut, rkt, minjets);
       if (ifail) {
          f[0] = 0.0;
@@ -54,15 +56,10 @@ int crossSection(const int *ndim, const cubareal x[], const int *ncomp, cubareal
       // Compute flux factor for this ps point and QCD factor (cte)
       double average = (1.0/NC)*(1.0/NC)/4.0;
       double qcdborn = pow(4.0*M_PI*AMZ, 3)*NC*NC/2.0;
-      double qcdfactor = 1.0;
-      switch(n) {
-         case 6:
-            qcdfactor = qcdborn;
-            break;
-         case 7:
-            qcdfactor = qcdborn*(4.0*M_PI*alpha_s)*(NC*NC-1.0)/NC ;
-            break;
-      }
+      double qcdfactor = qcdborn;
+      if (n > 6) qcdfactor = qcdfactor*(4.0*M_PI*alpha_s)*(NC*NC-1.0)/NC ;
+      if (n > 7) qcdfactor = qcdfactor*NC/2.0;
+
       double flux = average*qcdfactor*FBGEV2/2.0/pset.s(1,2);
 
       // Put everything together

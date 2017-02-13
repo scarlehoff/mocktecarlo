@@ -3,7 +3,6 @@
 #include <cuba.h>
 #include <LHAPDF/LHAPDF.h>
 
-
 using namespace std;
 using namespace LHAPDF;
 
@@ -22,9 +21,8 @@ int main() {
    int verbose = 2;
    char statefile[1] = "";
    // Dimensionality
-//   int ndim = 9; // n = 6
-   int ndim = 12; // n = 7
-//   int ndim = 15; // n = 8
+   int ndim = 9; // base, n = 6
+   ndim += (NPARTICLES-6)*3; // 7: 12, 8: 15
    // Error Tolerance
    double epsrel = 1e-6;
    double epsabs = 1e-6;

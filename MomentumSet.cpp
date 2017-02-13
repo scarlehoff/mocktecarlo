@@ -157,7 +157,6 @@ int MomentumSet::apply_cuts(const double ptcut, const  double rkt, const int min
    if (njets < minjet) return 1;
 
    return 0;
-   // user fastjet 
    // anti-kt
    // Create the diB array:
 //   vector <double> diB[2];
