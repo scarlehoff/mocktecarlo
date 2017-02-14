@@ -20,7 +20,7 @@ includeflags = []
 for i in include: includeflags.append('-I' + i)
 
 source  = ["main.cpp", "crossSection.cpp", "MomentumSet.cpp", 
-           "phaseSpace.cpp", "FourVector.cpp", "matrixElement.cpp"]
+           "phaseSpace.cpp", "FourVector.cpp", "matrixElement.cpp", "subtractionTerm.cpp"]
 libpath = [cubaSrc + "/lib", lhapdflib, fastjetlib]
 libs    = ['cuba', 'm', 'LHAPDF'] + fastjetlf
 ccflags = includeflags + ["-std=c++11"] 

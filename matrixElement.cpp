@@ -15,8 +15,8 @@ double matrixElement(MomentumSet *pset) {
 // Amplitudes
 // 2 -> 4
 double C0g0WFH(MomentumSet *pset) {
-	int i1 = 2; int i2 = 1; int i3 = 3; int i4 = 4;
-
+   int i1, i2, i3, i4;
+   pset->getID(&i1, &i2, &i3, &i4);
 	double s1i = pset->s(i1,i4);
 	double s2j = pset->s(i2,i3);
 	double prop = propagatorVBF(s1i, s2j, 1);
@@ -30,7 +30,8 @@ double C0g0WFH(MomentumSet *pset) {
 
 // 2 -> 5
 double C1g0WFH(MomentumSet *pset) {
-	int i1 = 2; int i2 = 1; int i3 = 4; int i4 = 5; int i5 = 3;
+   int i1, i2, i3, i4, i5;
+   pset->getID(&i1, &i2, &i3, &i4, &i5);
 	double a1 = C1g0WFHs0(i1, i5, i3, i2, i4, pset);
 	double a2 = C1g0WFHs0(i2, i5, i4, i1, i3, pset);
 	return a1 + a2;
@@ -64,7 +65,9 @@ double C1g0WFHs0(int i1, int i5, int i3, int i2, int i4, MomentumSet *pset) {
 
 // 2 -> 6
 double C2g0WFH(MomentumSet *pset) {
-	int i1 = 2; int i2 = 1; int i3 = 5; int i4 = 6; int i5 = 3; int i6 = 4;
+   int i1, i2, i3, i4, i5, i6;
+   pset->getID(&i1, &i2, &i3, &i4, &i5, &i6);
+
 	double nadj1 = C2g0WFHnadj(i1, i5, i4,     i2, i6, i3, pset);
 	double nadj2 = C2g0WFHnadj(i1, i6, i4,     i2, i5, i3, pset);
 	return nadj1 + nadj2;

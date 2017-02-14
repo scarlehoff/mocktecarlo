@@ -23,7 +23,22 @@ MomentumSet::MomentumSet(const int n_in, const vector<FourMomentum> p_in, const 
    ifail = 0;
 }
 
-// Getters
+// Setter
+//void MomentumSet::setID(const int ii1, const int ii2, const int ii3, const int ii4, const int ii5 = 0, const int ii6 = 0) {
+void MomentumSet::setID(int ii1, int ii2, int ii3, int ii4, int ii5, int ii6) {
+   i1 = ii1; i2 = ii2;
+   i3 = ii3; i4 = ii4;
+   i5 = ii5; i6 = ii6;
+}
+
+// Getter
+const void MomentumSet::getID(int *ii1, int *ii2, int *ii3, int *ii4, int *ii5, int *ii6) {
+  *ii1 = i1; *ii2 = i2;
+  *ii3 = i3; *ii4 = i4;
+  if (ii5 != 0) *ii5 = i5; 
+  if (ii6 != 0) *ii6 = i6; 
+}
+
 const cplx MomentumSet::zA(const int i, const int j) {
    int ii = i - 1;
    int ij = j - 1;

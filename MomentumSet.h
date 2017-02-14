@@ -22,10 +22,15 @@ class MomentumSet {
 
       int apply_cuts(const double ptcut, const double rkt, const int minjets);
 
+      // Setter
+//      void setID(consT int i1, const int i2, const int i3, const int i4, const int i5 = 0, const int i6 = 0);
+      void setID(int i1, int i2, int i3, int i4, int i5 = 0, int i6 = 0);
+
       // Getter
       const cplx zA(const int i, const int j);
       const cplx zB(const int i, const int j);
       const double s(const int i, const int j);
+      const void getID(int *i1, int *i2, int *i3, int *i4, int *i5 = 0, int *i6 = 0);
 
       // Debug
       void printAll();
@@ -37,6 +42,7 @@ class MomentumSet {
       cplx_array spinorA;
       void compute_spinors();
 	   const cplx eval_zA(int i, int j);
+      int i1, i2, i3, i4, i5, i6;
 };
 
 
