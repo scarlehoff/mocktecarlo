@@ -9,6 +9,11 @@ MomentumSet::MomentumSet(const int error) {
    ifail = 1;
 }
 
+MomentumSet::MomentumSet(const int n_in, const vector<FourMomentum> p_in) :
+   MomentumSet(n_in, p_in, 0.0, 0.0, 0.0 ){
+      ifail = 0;
+}
+
 MomentumSet::MomentumSet(const int n_in, const vector<FourMomentum> p_in, const double wt, const double x_1, const double x_2)
   : spinorA(boost::extents[n_in][n_in]) {
    npar    = n_in;
@@ -53,6 +58,45 @@ const cplx MomentumSet::zB(const int i, const int j) {
 const double MomentumSet::s(const int i, const int j) {
    cplx res = (zA(i,j)*zB(j,i));
    return res.real();
+}
+
+// Mapping
+MomentumSet MomentumSet::mapIF(const int ii1, const int ii3, const int ii4) {
+   // In order to use fortran notation in matrix elements we need to do this . . . 
+   int vi1 = ii1 - 1;
+   int vi3 = ii3 - 1;
+   int vi4 = ii4 - 1;
+   // Map particle i3 unto i1 and i4, i1 always initial hard radiator
+   int new_n = npar - 1;
+   vector <FourMomentum> p_out;
+   p_out.reserve(new_n);
+
+   double omx2 = -s(ii3, ii4)/( s(ii1,ii3) + s(ii1,ii4) );
+   double   x2 = 1.0 - omx2;
+
+   // set up initial particles
+   if (ii1 == 1) {
+      p_out.emplace_back(x2*pset[0]);
+      p_out.emplace_back(pset[1]);
+   } else if (ii1 == 2) {
+      p_out.emplace_back(pset[0]);
+      p_out.emplace_back(x2*pset[1]);
+   } else {
+      cout << "Particle ii1 not initial in mapIF" << endl;
+   }
+
+   // Map the rest, ii3 is pinched out and ii4 gets a contribution from p1
+   for (int i = 2; i < npar; i++) {
+      if (i == vi3) continue;
+      if (i == vi4) {
+         FourMomentum pini   = omx2*pset[vi1];
+         FourMomentum mapped = pset[i] + pset[vi3] - pini;
+         p_out.emplace_back(mapped);
+      } else {
+         p_out.emplace_back(pset[i]);
+      }
+   }
+   return MomentumSet(new_n, p_out);
 }
 
 // Debug

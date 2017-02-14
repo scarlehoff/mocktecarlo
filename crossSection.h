@@ -1,6 +1,6 @@
 #pragma once
 // Eventually part of runcard:
-#define NPARTICLES 8
+#define NPARTICLES 7
 #define MINJETS_   2
 
 // Prototypes

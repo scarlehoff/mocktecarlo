@@ -13,6 +13,7 @@ class MomentumSet {
    public:
       // Constructor
       MomentumSet(const int error);
+      MomentumSet(const int n_in, const std::vector <FourMomentum> p_in);
       MomentumSet(const int n_in, const std::vector <FourMomentum> p_in, const double wt, const double x_1, const double x_2);
 
       int npar, njets;
@@ -23,7 +24,6 @@ class MomentumSet {
       int apply_cuts(const double ptcut, const double rkt, const int minjets);
 
       // Setter
-//      void setID(consT int i1, const int i2, const int i3, const int i4, const int i5 = 0, const int i6 = 0);
       void setID(int i1, int i2, int i3, int i4, int i5 = 0, int i6 = 0);
 
       // Getter
@@ -31,6 +31,9 @@ class MomentumSet {
       const cplx zB(const int i, const int j);
       const double s(const int i, const int j);
       const void getID(int *i1, int *i2, int *i3, int *i4, int *i5 = 0, int *i6 = 0);
+
+      // Mapping
+      MomentumSet mapIF(const int i1, const int i3, const int i4);
 
       // Debug
       void printAll();

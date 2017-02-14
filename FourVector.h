@@ -22,6 +22,8 @@ class FourVector {
       double operator * (FourVector &v) const;
       FourVector operator * (const double k) const;
       FourVector operator / (const double k) const;
+      FourVector operator + (FourVector &v) const;
+      FourVector operator - (FourVector &v) const;
 
       friend std::ostream& operator << (std::ostream& os, const FourVector &v);
 
@@ -51,6 +53,8 @@ class FourMomentum : public FourVector {
       // Some more overloads
       FourMomentum operator * (const double k) const;
       FourMomentum operator / (const double k) const;
+      FourMomentum operator + (FourMomentum &v) const;
+      FourMomentum operator - (FourMomentum &v) const;
 
       // Utilities
       matrix boost_matrix();

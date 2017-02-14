@@ -25,6 +25,13 @@ double FourVector::sq() {
 }
 
 // Operator overloading
+FourVector FourVector::operator + (FourVector &v) const {
+   return FourVector(x + v.x, y + v.y, z + v.z, t + v.t);
+}
+FourVector FourVector::operator - (FourVector &v) const {
+   return FourVector(x - v.x, y - v.y, z - v.z, t - v.t);
+}
+
 double FourVector::operator * (FourVector &v) const {
    return v.t*t - (v.x*x + v.y*y + v.z*z);
 }
@@ -133,5 +140,7 @@ double FourMomentum::computeKin() {
 // Overrides
 FourMomentum FourMomentum::operator * (const double k) const { return FourMomentum(k*x,k*y,k*z,k*t); }
 FourMomentum FourMomentum::operator / (const double k) const { return FourMomentum(x/k,y/k,z/k,t/k); }
+FourMomentum FourMomentum::operator + (FourMomentum &v) const { return FourMomentum(x + v.x, y + v.y, z + v.z, t + v.t); }
+FourMomentum FourMomentum::operator - (FourMomentum &v) const { return FourMomentum(x - v.x, y - v.y, z - v.z, t - v.t);}
 
 

@@ -38,13 +38,6 @@ int crossSection(const int *ndim, const cubareal x[], const int *ncomp, cubareal
       if(n > 6) minjets += 1;
       if(n > 7) minjets += 1;
       int ifail = pset.apply_cuts(ptcut, rkt, minjets);
-//      for (int i = 0 ; i < pset.npar ; i++) {
-//         cout << i << ": " << pset.pset[i] << endl;
-//      }
-//      cout << "do we ever get here?" << minjets << endl;
-//      cout << "ifail : " << ifail << endl;
-//      cout << "njets : " << pset.njets << endl;
-//      cin.ignore();
       if (ifail) {
          f[0] = 0.0;
          return 0;
@@ -53,15 +46,15 @@ int crossSection(const int *ndim, const cubareal x[], const int *ncomp, cubareal
       // Define particle identities
       switch (n) {
          case 6:
-//      int i1 = 2; int i2 = 1; int i3 = 3; int i4 = 4;
+            // int i1 = 2; int i2 = 1; int i3 = 3; int i4 = 4;
             pset.setID(2, 1, 3, 4);
             break;
          case 7:
-//	int i1 = 2; int i2 = 1; int i3 = 4; int i4 = 5; int i5 = 3;
+            //	int i1 = 2; int i2 = 1; int i3 = 4; int i4 = 5; int i5 = 3;
             pset.setID(2, 1, 4, 5, 3);
             break;
          case 8:
-//	int i1 = 2; int i2 = 1; int i3 = 5; int i4 = 6; int i5 = 3; int i6 = 4;
+            //	int i1 = 2; int i2 = 1; int i3 = 5; int i4 = 6; int i5 = 3; int i6 = 4;
             pset.setID(2, 1, 5, 6, 3, 4);
             break;
       }
