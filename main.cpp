@@ -24,16 +24,16 @@ int main() {
    int ndim = 9; // base, n = 6
    ndim += (NPARTICLES-6)*3; // 7: 12, 8: 15
    // Error Tolerance
-   double epsrel = 1e-6;
-   double epsabs = 1e-6;
+   double epsrel = 1e-7;
+   double epsabs = 1e-7;
    // Integration parameters
    int seed = 0;
    int mineval = 0;
    // cluster
-   int maxeval = 50000000;
-   int nstart = 1000000;
-   int nincrease = 500000;
-   int nbatch = 1000000;
+   int maxeval   = 100000000;
+   int nstart    = 10000000;
+   int nincrease = 5000000;
+   int nbatch    = 6000000;
    // desktop
 //   int maxeval = 500000;
 //   int nstart = 10000;
