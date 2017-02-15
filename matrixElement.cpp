@@ -37,6 +37,22 @@ double C1g0WFH(MomentumSet *pset) {
 	return a1 + a2;
 }
 
+double C1g0WFHup(MomentumSet *pset) {
+   int i1, i2, i3, i4, i5;
+   pset->getID(&i1, &i2, &i3, &i4, &i5);
+	double a1 = C1g0WFHs0(i1, i5, i3, i2, i4, pset);
+	return a1;
+}
+
+double C1g0WFHdown(MomentumSet *pset) {
+   int i1, i2, i3, i4, i5;
+   pset->getID(&i1, &i2, &i3, &i4, &i5);
+	double a2 = C1g0WFHs0(i2, i5, i4, i1, i3, pset);
+	return a2;
+}
+
+
+
 double C1g0WFHs0(int i1, int i5, int i3, int i2, int i4, MomentumSet *pset) {
 	double s1i = pset->s(i1,i4);
 	double s1k = pset->s(i1,i5);

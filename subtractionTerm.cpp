@@ -17,36 +17,43 @@ double subtractionTerm(MomentumSet *pset, const double ptcut, const double rkt, 
 double C1g0WFHS(MomentumSet *pset, const double ptcut, const double rkt, const int minjets) {
    int i1, i2, i3, i4, i5;
    pset->getID(&i1, &i2, &i3, &i4, &i5);
-   // We have 2 possible limits:
-   double lim1 = 0.0;
-   double lim2 = 0.0;
-   int ifail   = 0;
 
    // i1 - i5 - i4
-   MomentumSet reducedpmap1 = pset->mapIF(i1, i5, i4);
-   ifail = reducedpmap1.apply_cuts(ptcut, rkt, minjets);
-   if (!ifail) {
-      double antenae   = A30(pset, i1, i5, i4);
-      double reducedME = C0g0WFH(&reducedpmap1);
-      lim1 = antenae*reducedME;
-   }
+   double lim1 = nadjLimitIF(pset, i1, i5, i4, C0g0WFH, ptcut, rkt, minjets);
+   
    // i2 - i5 - i3
-   MomentumSet reducedpmap2 = pset->mapIF(i2, i5, i3);
-   ifail = reducedpmap2.apply_cuts(ptcut, rkt, minjets);
-   if (!ifail) {
-      double antenae   = A30(pset, i2, i5, i3);
-      double reducedME = C0g0WFH(&reducedpmap2); 
-      lim2 = antenae*reducedME;
-   }
+   double lim2 = nadjLimitIF(pset, i2, i5, i3, C0g0WFH, ptcut, rkt, minjets);
+
    return lim1 + lim2;
 }
 
 // npar = 8
 double C2g0WFHS(MomentumSet *pset, const double ptcut, const double rkt, const int minjets) {
-   // We have many possible limits:
-   double lim1 = 0.0;
-   double lim2 = 0.0;
-   return lim1 + lim2;
+   int i1, i2, i3, i4, i5, i6;
+   pset->getID(&i1, &i2, &i3, &i4, &i5, &i6);
+   // i1 - i5 - i4
+   double lim1 = nadjLimitIF(pset, i1, i5, i4, C1g0WFHup, ptcut, rkt, minjets);
+   // i2 - i5 - i3
+   double lim2 = nadjLimitIF(pset, i2, i5, i3, C1g0WFHdown, ptcut, rkt, minjets);
+   // i1 - i6 - i4
+   double lim3 = nadjLimitIF(pset, i1, i6, i4, C1g0WFHup, ptcut, rkt, minjets);
+   // i2 - i6 - i3
+   double lim4 = nadjLimitIF(pset, i2, i6, i3, C1g0WFHdown, ptcut, rkt, minjets);
+
+   return lim1 + lim2 + lim3 + lim4;
+
+}
+
+// nadj limit (i1 initial, i2 soft)
+double nadjLimitIF(MomentumSet *pset, int i1, int i2, int i3, double (*MatrixE)(MomentumSet*), const double ptcut, const double rkt, const int minjets) {
+   MomentumSet reducedpmap1 = pset->mapIF(i1, i2, i3);
+   int ifail = reducedpmap1.apply_cuts(ptcut, rkt, minjets);
+   if (!ifail) {
+      double antenae   = A30(pset, i1, i2, i3);
+      double reducedME = MatrixE(&reducedpmap1);
+      return antenae*reducedME;
+   }
+   return 0.0;
 }
 
 // Antennae

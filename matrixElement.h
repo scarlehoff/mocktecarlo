@@ -7,6 +7,8 @@ double C0g0WFH(MomentumSet *pset);
 
 // 2 -> 5
 double C1g0WFH(MomentumSet *pset);
+double C1g0WFHup(MomentumSet *pset);
+double C1g0WFHdown(MomentumSet *pset);
 double C1g0WFHs0(int i1, int i5, int i3, int i2, int i4, MomentumSet *pset);
 
 // 2 -> 6
