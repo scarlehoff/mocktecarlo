@@ -23,7 +23,7 @@ source  = ["main.cpp", "crossSection.cpp", "MomentumSet.cpp",
            "phaseSpace.cpp", "FourVector.cpp", "matrixElement.cpp", "subtractionTerm.cpp"]
 libpath = [cubaSrc + "/lib", lhapdflib, fastjetlib]
 libs    = ['cuba', 'm', 'LHAPDF'] + fastjetlf
-ccflags = includeflags + ["-std=c++11"] 
+ccflags = includeflags + ["-std=c++11"]
 
 
 env = Environment(CCFLAGS = ccflags, LIBS = libs, LIBPATH = libpath)

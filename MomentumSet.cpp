@@ -1,6 +1,7 @@
 #include "MomentumSet.h"
 #include <string.h>
 #include <iostream>
+#include <limits>
 #include "fastjet/ClusterSequence.hh"
 
 using namespace std;
@@ -9,9 +10,10 @@ MomentumSet::MomentumSet(const int error) {
    ifail = 1;
 }
 
-MomentumSet::MomentumSet(const int n_in, const vector<FourMomentum> p_in) :
+MomentumSet::MomentumSet(const int n_in, const vector<FourMomentum> p_in, int i1, int i2, int i3, int i4, int i5, int i6) :
    MomentumSet(n_in, p_in, 0.0, 0.0, 0.0 ){
       ifail = 0;
+      setID(i1, i2, i3, i4, i5, i6);
 }
 
 MomentumSet::MomentumSet(const int n_in, const vector<FourMomentum> p_in, const double wt, const double x_1, const double x_2)
@@ -23,8 +25,12 @@ MomentumSet::MomentumSet(const int n_in, const vector<FourMomentum> p_in, const 
 
    pset.reserve(p_in.size());
    copy(p_in.begin(), p_in.end(), back_inserter(pset));
-
    compute_spinors();
+
+//   fortranOutput();
+
+   if ( (x1 != 0.0) && (x2 != 0.0) ) boostToLab(); //assumes p1 ---> <---- p2
+
    ifail = 0;
 }
 
@@ -96,7 +102,15 @@ MomentumSet MomentumSet::mapIF(const int ii1, const int ii3, const int ii4) {
          p_out.emplace_back(pset[i]);
       }
    }
-   return MomentumSet(new_n, p_out);
+
+   // New parton labels
+   int n1 = i1;
+   int n2 = i2;
+   int n3 = i3;
+   int n4 = i4;
+   if (i3 > i5) n3 -= 1;
+   if (i4 > i5) n4 -= 1;
+   return MomentumSet(new_n, p_out, n1, n2, n3, n4, 0, 0);
 }
 
 // Debug
@@ -120,6 +134,20 @@ void MomentumSet::printAll() {
          cout << "zB_" << i << j << " = " << zB(i,j) << endl;
       }
    }
+}
+
+void MomentumSet::fortranOutput() {
+   typedef numeric_limits<double>dbl;
+   cout.precision(dbl::max_digits10);
+   cout << "Fortran Output" << endl;
+   cout << "      x1 = " << fixed << x1 << "d0" << endl;
+   cout << "      x2 = " << fixed << x2 << "d0" << endl;
+   for (int i = 0; i < npar; i++) {
+      cout << "      kin(" << npar << ")\%p(:," << i+1 << ") = (/";
+      cout << fixed << pset[i].px << "d0," << fixed << pset[i].py << "d0," << fixed << pset[i].pz << "d0," << fixed << pset[i].E << "d0/)";
+      cout << endl;
+   }
+   cin.ignore();
 }
 
 // Private functions: Spinors
@@ -180,6 +208,19 @@ const cplx MomentumSet::eval_zA(int i, int j) {
    if ( i == 2  || j == 2) res = -res*zi ;
 
    return res;
+}
+
+// Private function: boostToLab
+void MomentumSet::boostToLab() {
+   double eta = -0.5 * log(x1/x2);
+   double cth = cosh(eta);
+   double sth = sinh(eta);
+   double cz, cE;
+   for (int i = 0; i < npar; i++) {
+      cz = pset[i].pz ; cE = pset[i].E;
+      pset[i].pz = cth*cz - sth*cE;
+      pset[i].E  = cth*cE - sth*cz;
+   }
 }
 
 // Public functions: cuts

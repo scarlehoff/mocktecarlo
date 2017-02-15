@@ -35,10 +35,10 @@ int main() {
    int nincrease = 4000000;
    int nbatch    = 600000;
    // desktop
-//   int maxeval = 500000;
-//   int nstart = 10000;
-//   int nincrease = 5000;
-//   int nbatch = 10000;
+//   int maxeval   = 5000000;
+//   int nstart    = 200000;
+//   int nincrease = 800000;
+//   int nbatch    = 200000;
    // --- 
    int gridno = 0;
    cubareal integral[ncomp], error[ncomp], prob[ncomp];

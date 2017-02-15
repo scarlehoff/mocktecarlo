@@ -38,10 +38,6 @@ int crossSection(const int *ndim, const cubareal x[], const int *ncomp, cubareal
       if(n > 6) minjets += 1;
       if(n > 7) minjets += 1;
       int ifail = pset.apply_cuts(ptcut, rkt, minjets);
-      if (ifail) {
-         f[0] = 0.0;
-         return 0;
-      } 
 
       // Define particle identities
       switch (n) {
@@ -51,15 +47,20 @@ int crossSection(const int *ndim, const cubareal x[], const int *ncomp, cubareal
             break;
          case 7:
             //	int i1 = 2; int i2 = 1; int i3 = 4; int i4 = 5; int i5 = 3;
-            pset.setID(2, 1, 4, 5, 3);
+            pset.setID(2, 1, 4, 5,  3);
             break;
          case 8:
             //	int i1 = 2; int i2 = 1; int i3 = 5; int i4 = 6; int i5 = 3; int i6 = 4;
-            pset.setID(2, 1, 5, 6, 3, 4);
+            pset.setID(2, 1, 5, 6,  3, 4);
             break;
       }
-      // Compute Matrix Element from it
-      double mesq = matrixElement(&pset);
+      // Compute Matrix Element
+      double mesq;
+      if (!ifail) {
+         mesq = matrixElement(&pset);
+      } else {
+         mesq = 0.0;
+      }
 
       // Compute subtraction term if necessary
       if ( (n-4) > minjets ) {

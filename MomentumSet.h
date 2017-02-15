@@ -13,7 +13,7 @@ class MomentumSet {
    public:
       // Constructor
       MomentumSet(const int error);
-      MomentumSet(const int n_in, const std::vector <FourMomentum> p_in);
+      MomentumSet(const int n_in, const std::vector <FourMomentum> p_in, int i1, int i2, int i3, int i4, int i5 = 0, int i6 = 0);
       MomentumSet(const int n_in, const std::vector <FourMomentum> p_in, const double wt, const double x_1, const double x_2);
 
       int npar, njets;
@@ -37,6 +37,7 @@ class MomentumSet {
 
       // Debug
       void printAll();
+      void fortranOutput();
 
       // Destructor
       void cleanmem();
@@ -44,6 +45,7 @@ class MomentumSet {
    private:
       cplx_array spinorA;
       void compute_spinors();
+      void boostToLab();
 	   const cplx eval_zA(int i, int j);
       int i1, i2, i3, i4, i5, i6;
 };
