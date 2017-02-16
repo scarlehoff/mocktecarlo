@@ -30,6 +30,7 @@ class MomentumSet {
       const cplx zA(const int i, const int j);
       const cplx zB(const int i, const int j);
       const double s(const int i, const int j);
+      const double sijk(const int i, const int j, const int k);
       const void getID(int *i1, int *i2, int *i3, int *i4, int *i5 = 0, int *i6 = 0);
 
       // Mapping

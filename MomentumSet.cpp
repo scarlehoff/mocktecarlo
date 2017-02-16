@@ -65,6 +65,9 @@ const double MomentumSet::s(const int i, const int j) {
    cplx res = (zA(i,j)*zB(j,i));
    return res.real();
 }
+const double MomentumSet::sijk(const int i, const int j, const int k) {
+   return (s(i,j) + s(i,k) + s(j,k));
+}
 
 // Mapping
 MomentumSet MomentumSet::mapIF(const int ii1, const int ii3, const int ii4) {
