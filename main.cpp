@@ -30,9 +30,9 @@ int main() {
    int seed = 0;
    int mineval = 0;
    // cluster
-   int maxeval   = 50000000;
+   int maxeval   =100000000;
    int nstart    = 5000000;
-   int nincrease = 4000000;
+   int nincrease = 2000000;
    int nbatch    = 600000;
    // desktop
 //   int maxeval   = 5000000;

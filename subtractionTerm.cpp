@@ -32,13 +32,13 @@ double C2g0WFHS(MomentumSet *pset, const double ptcut, const double rkt, const i
    int i1, i2, i3, i4, i5, i6;
    pset->getID(&i1, &i2, &i3, &i4, &i5, &i6);
    // i1 - i5 - i4
-   double lim1 = nadjLimitIF(pset, i1, i5, i4, C1g0WFHup, ptcut, rkt, minjets);
+   double lim1 = nadjLimitIF(pset, i1, i5, i4, C1g0WFHdown, ptcut, rkt, minjets);
    // i2 - i5 - i3
-   double lim2 = nadjLimitIF(pset, i2, i5, i3, C1g0WFHdown, ptcut, rkt, minjets);
+   double lim2 = nadjLimitIF(pset, i2, i5, i3, C1g0WFHup, ptcut, rkt, minjets);
    // i1 - i6 - i4
-   double lim3 = nadjLimitIF(pset, i1, i6, i4, C1g0WFHup, ptcut, rkt, minjets);
+   double lim3 = nadjLimitIF(pset, i1, i6, i4, C1g0WFHdown, ptcut, rkt, minjets);
    // i2 - i6 - i3
-   double lim4 = nadjLimitIF(pset, i2, i6, i3, C1g0WFHdown, ptcut, rkt, minjets);
+   double lim4 = nadjLimitIF(pset, i2, i6, i3, C1g0WFHup, ptcut, rkt, minjets);
 
    return lim1 + lim2 + lim3 + lim4;
 

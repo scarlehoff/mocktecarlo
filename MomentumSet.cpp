@@ -108,9 +108,13 @@ MomentumSet MomentumSet::mapIF(const int ii1, const int ii3, const int ii4) {
    int n2 = i2;
    int n3 = i3;
    int n4 = i4;
-   if (i3 > i5) n3 -= 1;
-   if (i4 > i5) n4 -= 1;
-   return MomentumSet(new_n, p_out, n1, n2, n3, n4, 0, 0);
+   int n5 = i5;
+   int n6 = i6;
+   if (i3 > ii3) n3 -= 1;
+   if (i4 > ii3) n4 -= 1;
+   if (i5 > ii3) n5 -= 1;
+   if (i6 > ii3) n6 -= 1;
+   return MomentumSet(new_n, p_out, n1, n2, n3, n4, n5, n6);
 }
 
 // Debug

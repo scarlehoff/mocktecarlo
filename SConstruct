@@ -23,7 +23,12 @@ source  = ["main.cpp", "crossSection.cpp", "MomentumSet.cpp",
            "phaseSpace.cpp", "FourVector.cpp", "matrixElement.cpp", "subtractionTerm.cpp"]
 libpath = [cubaSrc + "/lib", lhapdflib, fastjetlib]
 libs    = ['cuba', 'm', 'LHAPDF'] + fastjetlf
-ccflags = includeflags + ["-std=c++11"]
+# debug
+dbflags = ["-g", "-O2", 
+#            "-Q", # will show which function is causing it to crash
+#            "-v", # shows how ccl was invoked
+           ]
+ccflags = includeflags + ["-std=c++11"] # + dbflags
 
 
 env = Environment(CCFLAGS = ccflags, LIBS = libs, LIBPATH = libpath)
