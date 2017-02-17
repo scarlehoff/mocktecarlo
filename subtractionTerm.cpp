@@ -42,13 +42,31 @@ double C2g0WFHS(MomentumSet *pset, const double ptcut, const double rkt, const i
       double lim3 = nadjLimitIF(pset, i1, i6, i4, C1g0WFHdown, ptcut, rkt, minjets);
       // i2 - i6 - i3
       double lim4 = nadjLimitIF(pset, i2, i6, i3, C1g0WFHup, ptcut, rkt, minjets);
-      nadj = lim1 + lim2 + lim3 + lim4;
+      limnadj = lim1 + lim2 + lim3 + lim4;
    }
 
    if (adj) {
+      // i1 - i5 - i6
+      double lim1 = adjLimitIF(pset, i1, i5, i6, C1g0WFHup, ptcut, rkt, minjets);
+      // i1 - i6 - i5
+      double lim2 = adjLimitIF(pset, i1, i6, i5, C1g0WFHup, ptcut, rkt, minjets);
+      // i2 - i5 - i6
+      double lim3 = adjLimitIF(pset, i2, i5, i6, C1g0WFHdown, ptcut, rkt, minjets);
+      // i2 - i6 - i5
+      double lim4 = adjLimitIF(pset, i2, i6, i5, C1g0WFHdown, ptcut, rkt, minjets);
+      // i4 - i5 - i6
+      double lim5 = adjLimitFF(pset, i4, i5, i6, C1g0WFHup, ptcut, rkt, minjets);
+      // i4 - i6 - i5
+      double lim6 = adjLimitFF(pset, i4, i6, i5, C1g0WFHup, ptcut, rkt, minjets);
+      // i3 - i5 - i6
+      double lim7 = adjLimitFF(pset, i3, i5, i6, C1g0WFHdown, ptcut, rkt, minjets);
+      // i3 - i6 - i5
+      double lim8 = adjLimitFF(pset, i3, i6, i5, C1g0WFHdown, ptcut, rkt, minjets);
+      limadj = lim1 + lim2 + lim3 + lim4 + lim5 + lim6 + lim7 + lim8;
+//      limadj = lim1 + lim6;
    }
 
-   return adj + nadj;
+   return limadj + limnadj;
 
 
 }

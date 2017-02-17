@@ -81,15 +81,15 @@ MomentumSet MomentumSet::mapIF(const int ii1, const int ii3, const int ii4) {
    p_out.reserve(new_n);
 
    double omx2 = -s(ii3, ii4)/( s(ii1,ii3) + s(ii1,ii4) );
-   double   x2 = 1.0 - omx2;
+   double  xx2 = 1.0 - omx2;
 
    // set up initial particles
    if (ii1 == 1) {
-      p_out.emplace_back(x2*pset[0]);
+      p_out.emplace_back(xx2*pset[0]);
       p_out.emplace_back(pset[1]);
    } else if (ii1 == 2) {
       p_out.emplace_back(pset[0]);
-      p_out.emplace_back(x2*pset[1]);
+      p_out.emplace_back(xx2*pset[1]);
    } else {
       cout << "Particle ii1 not initial in mapIF" << endl;
    }
@@ -131,22 +131,36 @@ MomentumSet MomentumSet::mapFF(const int ii3, const int ii4, const int ii5) {
    // particle i4 is shared between i3 and i5
    // initial particles don't change
    p_out.emplace_back(pset[0]);
-   p_out.emplace_back(x2*pset[0]);
+   p_out.emplace_back(pset[1]);
 
-   double x = 0;
-   double y = 0;
-   double z = 0;
-   double omx = 1.0 - x;
+   double s34  = s(ii3, ii4);
+   double s45  = s(ii4, ii5);
+   double s35  = s(ii3, ii5);
+   double s345 = sijk(ii3, ii4, ii5);
+
+   double y   = s45 / (s34 + s45);
    double omy = 1.0 - y;
-   double omz = 1.0 - z;
+   double rho = sqrt(1.0 + 4.0*y*omy*s34*s45/s345/s35);
+
+   double x   = (1.0 + rho + s45*(1.0 + rho - 2.0*y)/(s34+s35))/2.0;
+   double omx = 1.0 - x;
+
+   double omz = (1.0 + rho + s34*(1.0 + rho - 2.0*omy)/(s45+s35))/2.0;
+   double z   = 1.0 - omz;
 
    for (int i = 2; i < npar; i++) {
       if (i == vi4) continue;
       if (i == vi3) {
-         FourMomentum mapped = pset[ii3] ;// * x + pset[ii4] * y + pset[ii5] * z;
+         FourMomentum p1n = x*pset[vi3];
+         FourMomentum p2n = y*pset[vi4];
+         FourMomentum p3n = z*pset[vi5];
+         FourMomentum mapped = p1n + p2n + p3n;
          p_out.emplace_back(mapped);
       } else if (i == vi5) {
-         FourMomentum mapped = pset[ii3] ;//* omx + pset[ii4] * omy + pset[ii5] * omz;
+         FourMomentum p1n = omx*pset[vi3];
+         FourMomentum p2n = omy*pset[vi4];
+         FourMomentum p3n = omz*pset[vi5];
+         FourMomentum mapped = p1n + p2n + p3n;
          p_out.emplace_back(mapped);
       } else {
          p_out.emplace_back(pset[i]);
