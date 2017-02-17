@@ -120,6 +120,53 @@ MomentumSet MomentumSet::mapIF(const int ii1, const int ii3, const int ii4) {
    return MomentumSet(new_n, p_out, n1, n2, n3, n4, n5, n6);
 }
 
+MomentumSet MomentumSet::mapFF(const int ii3, const int ii4, const int ii5) {
+   // In order to use fortran notation in matrix elements we need to do this . . . 
+   int vi3 = ii3 - 1;
+   int vi4 = ii4 - 1;
+   int vi5 = ii5 - 1;
+   int new_n = npar - 1;
+   vector <FourMomentum> p_out;
+   p_out.reserve(new_n);
+   // particle i4 is shared between i3 and i5
+   // initial particles don't change
+   p_out.emplace_back(pset[0]);
+   p_out.emplace_back(x2*pset[0]);
+
+   double x = 0;
+   double y = 0;
+   double z = 0;
+   double omx = 1.0 - x;
+   double omy = 1.0 - y;
+   double omz = 1.0 - z;
+
+   for (int i = 2; i < npar; i++) {
+      if (i == vi4) continue;
+      if (i == vi3) {
+         FourMomentum mapped = pset[ii3] ;// * x + pset[ii4] * y + pset[ii5] * z;
+         p_out.emplace_back(mapped);
+      } else if (i == vi5) {
+         FourMomentum mapped = pset[ii3] ;//* omx + pset[ii4] * omy + pset[ii5] * omz;
+         p_out.emplace_back(mapped);
+      } else {
+         p_out.emplace_back(pset[i]);
+      }
+   }
+
+   // New parton labels
+   int n1 = i1;
+   int n2 = i2;
+   int n3 = i3;
+   int n4 = i4;
+   int n5 = i5;
+   int n6 = i6;
+   if (i3 > ii4) n3 -= 1;
+   if (i4 > ii4) n4 -= 1;
+   if (i5 > ii4) n5 -= 1;
+   if (i6 > ii4) n6 -= 1;
+   return MomentumSet(new_n, p_out, n1, n2, n3, n4, n5, n6);
+}
+
 // Debug
 void MomentumSet::printAll() {
    cout << "----DEBUG-----" << endl;

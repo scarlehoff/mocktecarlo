@@ -35,6 +35,7 @@ class MomentumSet {
 
       // Mapping
       MomentumSet mapIF(const int i1, const int i3, const int i4);
+      MomentumSet mapFF(const int i1, const int i3, const int i4);
 
       // Debug
       void printAll();
