@@ -9,7 +9,8 @@ Uses:
 Compile:
 scons .
 
-Todo:
-- Write 2 -> 4 (6) ME
-- Implement sub terms for 2 -> 3 (5)
-- Implement sub terms for 2 -> 4 (6)
+Note:
+This code already served its purpose as a crosscheck for ""some other"" code. 
+I will make it into a "write your own Monte Carlo for HEP" tutorial when/if I have the time. 
+
+Any questions, feel free to contact me!
