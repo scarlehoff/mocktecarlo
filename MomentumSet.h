@@ -22,6 +22,7 @@ class MomentumSet {
       std::vector <FourMomentum> pset;
 
       int apply_cuts(const double ptcut, const double rkt, const int minjets);
+      int sijcuts(const double);
 
       // Setter
       void setID(int i1, int i2, int i3, int i4, int i5 = 0, int i6 = 0);

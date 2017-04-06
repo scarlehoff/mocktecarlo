@@ -292,6 +292,15 @@ void MomentumSet::boostToLab() {
 }
 
 // Public functions: cuts
+int MomentumSet::sijcuts(double techcut) {
+    double scut = techcut*s(1,2);
+    for (int i = 1; i <= npar-1; i++) {
+        for (int j = i+1; j <= npar; j++) {
+            if (abs(s(i,j)) < scut) return 1;
+        }
+    }
+    return 0;
+}
 int MomentumSet::apply_cuts(const double ptcut, const  double rkt, const int minjet) {
    using namespace fastjet;
    // Copy the jets we care about to fastjet

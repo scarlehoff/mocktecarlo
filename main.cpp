@@ -19,7 +19,8 @@ int main() {
    int spin = 0;
    int neval, fail;
    int verbose = 2;
-   char statefile[7] = "status";
+   char statefile[7] = "";
+//   char statefile[7] = "status";
    // Dimensionality
    int ndim = 9; // base, n = 6
    ndim += (NPARTICLES-6)*3; // 7: 12, 8: 15
@@ -30,15 +31,15 @@ int main() {
    int seed = 0;
    int mineval = 0;
    // cluster
-   int maxeval   =900000000;
-   int nstart    = 5000000;
-   int nincrease = 3000000;
-   int nbatch    = 600000;
+//   int maxeval   = 900000000;
+//   int nstart    =   5000000;
+//   int nincrease =   3000000;
+//   int nbatch    =    600000;
    // desktop
-//   int maxeval   = 5000000;
-//   int nstart    = 200000;
-//   int nincrease = 800000;
-//   int nbatch    = 200000;
+   int maxeval   = 9000000;
+   int nstart    =  200000;
+   int nincrease =  800000;
+   int nbatch    =  200000;
    // --- 
    int gridno = 0;
    cubareal integral[ncomp], error[ncomp], prob[ncomp];
