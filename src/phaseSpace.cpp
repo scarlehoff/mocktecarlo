@@ -1,4 +1,5 @@
-#include "phaseSpace.h"
+#include "Runcard.h"
+#include "PhaseSpace.h"
 #include <iostream>
 #include <string.h>
 
@@ -47,14 +48,14 @@ MomentumSet phaseSpace(int npar, double s_input, const cubareal x[]) {
          s2 = 0.0;
          break;
       case 7:
-         smin = y0*shat;
+         smin = Y0*shat;
          smax = pow(sqrt(shat) - sqrt(shiggs), 2) - smin;
          if (smax <= smin) return MomentumSet(0);
          s1 = pickRand(2, smin, smax, x[nrand_out], &wtps);
          s2 = 0.0;
          break;
       case 8: // Triplecolinear case, this is the same for 7 and 8
-         smin = y0*shat;
+         smin = Y0*shat;
          smax = pow(sqrt(shat) - sqrt(shiggs), 2) - smin;
          if (smax <= smin) return MomentumSet(0);
          s1   = pickRand(2, smin, smax, x[nrand_out], &wtps);
@@ -167,7 +168,7 @@ MomentumSet phaseSpace(int npar, double s_input, const cubareal x[]) {
 double generateInwa(const int itype, const double r, const double shat, double mh, double *wtps) {
    double s12 = 0.0;
    if (UNIT_PHASE) {
-      double smin = y0*shat;
+      double smin = Y0*shat;
       double smax = shat;
       s12 = pickRand(1, smin, smax, r, wtps);
       //        cout << "GenerateInwa" << endl;
@@ -232,7 +233,7 @@ int p3generic_nj(const cubareal x[], const int n_i, const double shat, const dou
    double s23 = pow(sqrt(s2) + sqrt(s3), 2);
    double t1max, t1min;
    glimits(shat, 0.0, s23, rma2, rmb2, s1, &t1max, &t1min);
-   t1max = min(t1max, y0*t1min); 
+   t1max = min(t1max, Y0*t1min); 
    double t1 = - pickRand(2,-t1max,-t1min, x1, wtps);
    if (DEBUG) { 
       cout << "t1 sampling:" << endl;
@@ -245,7 +246,7 @@ int p3generic_nj(const cubareal x[], const int n_i, const double shat, const dou
    s23 = (s1*t1 - shat*t1 - t1*t1) / (s1 - t1);
    double t2min, t2max;
    glimits(s23, 0.0, s2, rmb2, t1, s3, &t2max, &t2min);
-   t2max = min(t2max, y0*t2min);
+   t2max = min(t2max, Y0*t2min);
    double t2 = - pickRand(2,-t2max,-t2min, x2, wtps);
    if (DEBUG) {
       cout << "t2 sampling:" << endl;

@@ -6,8 +6,7 @@
 using namespace std;
 using namespace LHAPDF;
 
-#include "crossSection.h"
-
+#include "CrossSection.h"
 
 int testRecipe(const int *ndim, const cubareal x[], const int *ncomp, cubareal f[], void *userdata);
 
@@ -42,10 +41,10 @@ int main() {
    int nbatch    =  200000;
    // --- 
    int gridno = 0;
+   const string setname = SETNAME_;
    cubareal integral[ncomp], error[ncomp], prob[ncomp];
 
    // PDF for alpha_s
-   const string setname = "MSTW2008nnlo90cl";
    const int imem = 0;
    const PDF* pdf = mkPDF(setname, imem);
    double alpha_s = pdf->alphasQ2(pow(125.0,2)); // necessary for LHAPDF to work multicore?
@@ -67,7 +66,7 @@ int main() {
 }
 
 #include "FourVector.h"
-#include "phaseSpace.h"
+#include "PhaseSpace.h"
 
 int testRecipe(const int *ndim, const cubareal x[], const int *ncomp, cubareal f[], void *userdata) {
    cout << "Debug system, press enter to continue" << endl;

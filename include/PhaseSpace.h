@@ -6,17 +6,10 @@
 #include "MomentumSet.h"
 #include "FourVector.h"
 
-
-
-#define UNIT_PHASE 1
-#define DEBUG 0
 #define COSTHMIN -1.0
 #define COSTHMAX 1.0
 #define PHIMAX 2.0*M_PI
 #define PHIMIN 0.0
-
-#define y0 1e-7
-
 
 typedef boost::multi_array<double, 2> matrix;
 

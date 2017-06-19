@@ -1,5 +1,5 @@
-#include "subtractionTerm.h"
-#include "matrixElement.h"
+#include "SubtractionTerm.h"
+#include "MatrixElement.h"
 
 using namespace std;
 

@@ -2,11 +2,11 @@
 #include <math.h>
 #include <iostream>
 #include <LHAPDF/LHAPDF.h>
-#include "phaseSpace.h" 
+#include "PhaseSpace.h" 
 #include "MomentumSet.h" 
-#include "matrixElement.h"
-#include "subtractionTerm.h"
-#include "crossSection.h"
+#include "MatrixElement.h"
+#include "SubtractionTerm.h"
+#include "CrossSection.h"
 
 #define FBGEV2 389379365600
 #define NC 3.0
@@ -17,8 +17,8 @@ using namespace LHAPDF;
 
 int crossSection(const int *ndim, const cubareal x[], const int *ncomp, cubareal f[], void *pdf) {
     int n        = NPARTICLES;
-    double roots = 8000.0;
-    double muR   = 125.0 ; // muR = muF = mH
+    double roots = ROOTS_;
+    double muR   = SCALE_; // muR = muF = mH
     double s     = pow(roots, 2);
 
     // Generate phase space point from cuba x[]
@@ -30,16 +30,16 @@ int crossSection(const int *ndim, const cubareal x[], const int *ncomp, cubareal
 
     // Check whether the point goes through all cuts (Check the momentum is not null, if it is then return)
     if (UNIT_PHASE) {
-        int ifail = pset.sijcuts(y0);
+        int ifail = pset.sijcuts(Y0);
         if (!ifail) {
             f[0] = pset.weight/abs(pset.s(1,3));
         } else {
             f[0] = 0.0f;
         }
     } else {
-        double ptcut = 15; // GeV
-        double rkt   = 0.5;
         int minjets  = MINJETS_;
+        double ptcut = PTCUT_;
+        double rkt = RKT_;
         if(n > 6) minjets += 1;
         if(n > 7) minjets += 1;
         int ifail = pset.apply_cuts(ptcut, rkt, minjets);
@@ -73,7 +73,7 @@ int crossSection(const int *ndim, const cubareal x[], const int *ncomp, cubareal
             mesq = mesq - subt;
         }
 
-        // Compute the PDFs
+        // Compute the PDFs for a u(c) d(s) interaction
         double f1      = (*((PDF **) pdf))->xfxQ2(2, pset.x1, pow(muR,2));
         f1+= (*((PDF **) pdf))->xfxQ2(4, pset.x1, pow(muR,2));
         double f2      = (*((PDF **) pdf))->xfxQ2(1, pset.x2, pow(muR,2));

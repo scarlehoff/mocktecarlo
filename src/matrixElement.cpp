@@ -1,5 +1,5 @@
 #include "MomentumSet.h"
-#include "matrixElement.h"
+#include "MatrixElement.h"
 
 double matrixElement(MomentumSet *pset) {
    switch (pset->npar) {

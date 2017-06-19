@@ -15,12 +15,17 @@ fastjetinc = fastjetsrc + "/include"
 fastjetlf  = ["fastjettools", "fastjet", "fastjetplugins", "siscone", "siscone_spherical"]
 
 ## Generate include flags
-include = [lhapdfinc, cubaSrc + "/include", fastjetinc]
+include = [lhapdfinc, cubaSrc + "/include", fastjetinc, "include"]
 includeflags = []
-for i in include: includeflags.append('-I' + i)
+for i in include: 
+    includeflags.append('-I' + i)
 
-source  = ["main.cpp", "crossSection.cpp", "MomentumSet.cpp", 
+source_files  = ["main.cpp", "crossSection.cpp", "MomentumSet.cpp", 
            "phaseSpace.cpp", "FourVector.cpp", "matrixElement.cpp", "subtractionTerm.cpp"]
+source=[]
+for filename in source_files:
+    source.append("src/" + filename)
+
 libpath = [cubaSrc + "/lib", lhapdflib, fastjetlib]
 libs    = ['cuba', 'm', 'LHAPDF'] + fastjetlf
 # debug
