@@ -267,7 +267,7 @@ double vertexCorrectionC0g1(MomentumSet *pset, double scale) {
 double integratedDipolesC0g1(MomentumSet *pset, double scale) {
     double rtree = C0g0WFH(pset);
     // Insertion I
-    double I = 10.0 - 7.0*pi^2/6.0;
+    double I = 10.0 - 7.0*pow(M_PI,2)/6.0;
     return 0.0;
 }
 double integratedSplitting(MomentumSet *pset, const double scale, const int ix) {
@@ -282,6 +282,8 @@ double integratedSplitting(MomentumSet *pset, const double scale, const int ix) 
 
     if (ix == 1) {
     }
+
+    double total = 0.0;
 
     return total;
 }
