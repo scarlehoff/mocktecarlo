@@ -1,4 +1,5 @@
 #pragma once
+#include <cuba.h>
 
 double matrixElement(MomentumSet *pset);
 
@@ -22,7 +23,7 @@ cplx C2g0WFHadj1m2m(int i1, int i5, int i6, int i3, int i2, int i4, MomentumSet 
 
 // Virtual functions
 double vertexCorrectionC0g1(MomentumSet *, double);
-double integratedDipolesC0g1(MomentumSet *, double);
+double integratedDipolesC0g1(MomentumSet *, double, const int, const double, const double);
 
 // Common
 double propagatorVBF(const double s1, const double s2, const int iboson);

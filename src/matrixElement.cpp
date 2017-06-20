@@ -264,30 +264,24 @@ double vertexCorrectionC0g1(MomentumSet *pset, double scale) {
     return total;
 }
 
-double integratedDipolesC0g1(MomentumSet *pset, double scale) {
+double integratedDipolesC0g1(MomentumSet *pset, double scale, const int ix, const double x1, const double x2) {
     double rtree = C0g0WFH(pset);
-    // Insertion I
-    double I = 10.0 - 7.0*pow(M_PI,2)/6.0;
-    return 0.0;
-}
-double integratedSplitting(MomentumSet *pset, const double scale, const int ix) {
-    double rtree = C0g0WFH(pset);
-    // Insertion I
     int i1, i2, i3, i4;
     pset->getID(&i1, &i2, &i3, &i4);
     // logs
     double rs2 = pow(scale, 2);
     double dls14 = -log(fabs(pset->s(i1,i4)/rs2));
     double dls23 = -log(fabs(pset->s(i2,i3)/rs2));
-
-    if (ix == 1) {
+    double total;
+    // Insertion I
+    switch (ix) {
+        case(1): // 1, 1
+            double Ics = 10.0 - 7.0*pow(M_PI,2)/6.0;
+        case(2): // x1, 1
+        case(3): // 1, x2
     }
-
-    double total = 0.0;
-
     return total;
 }
-
 
 // Propagators
 

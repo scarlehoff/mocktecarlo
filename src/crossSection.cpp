@@ -27,6 +27,11 @@ int crossSection(const int *ndim, const cubareal x[], const int *ncomp, cubareal
         f[0] = 0.0;
         return 0;
     }
+    if (VIRTUAL) {
+        double z1 = x[ncomp-1];
+        double z2 = x[ncomp-2];
+    }
+
 
     // Check whether the point goes through all cuts (Check the momentum is not null, if it is then return)
     if (UNIT_PHASE) {
@@ -60,13 +65,12 @@ int crossSection(const int *ndim, const cubareal x[], const int *ncomp, cubareal
                 break;
         }
         // Compute Matrix Element
-        double mesq, vfact, intfact, splfact;
+        double mesq, vfact;
         if (!ifail) {
             if (VIRTUAL) {
                 // For x,y = 1
                 vfact = vertexCorrectionC0g1(&pset, muR);
-                intfact = integratedDipolesC0g1(&pset, muR);
-                mesq = vfact - intfact;
+                mesq = vfact;
             } else {
                 mesq = matrixElement(&pset);
             }
@@ -81,12 +85,9 @@ int crossSection(const int *ndim, const cubareal x[], const int *ncomp, cubareal
         }
 
         // Compute the PDFs for a u(c) d(s) interaction
-        double f1      = (*((PDF **) pdf))->xfxQ2(2, pset.x1, pow(muR,2));
-        f1+= (*((PDF **) pdf))->xfxQ2(4, pset.x1, pow(muR,2));
-        double f2      = (*((PDF **) pdf))->xfxQ2(1, pset.x2, pow(muR,2));
-        f2+= (*((PDF **) pdf))->xfxQ2(3, pset.x2, pow(muR,2));
-        double pdfval  = f1*f2/pset.x1/pset.x2;
+        double pdfval = pdfValue(pset.x1, pset.x2, pow(muR,2), pdf);
         double alpha_s = (*((PDF **) pdf))->alphasQ2(pow(muR,2));
+
 
         // Compute flux factor for this ps point and QCD factor (cte)
         double average = (1.0/NC)*(1.0/NC)/4.0;
@@ -103,7 +104,38 @@ int crossSection(const int *ndim, const cubareal x[], const int *ncomp, cubareal
 
         // Put everything together
         f[0] = mesq*flux*pset.weight*pdfval;
+
+        if (VIRTUAL) { //Wait!
+            if (z1 > pset.x1 || z2 > pset.x2) {
+                // Then don't do the dipoles for this point
+                return 0;
+            }
+            double aux = flux*pset*weight;
+            double intfact;
+            // Then we need to run over the 3 possible regions
+            // ix = 1 (x1 = 1, x2 = 1)
+            intfact = integratedDipolesC0g1(&pset, muR, ix, 1.0, 1.0);
+            f[0] += aux*intfact*pdfval;
+            // ix = 2 (x1 = 1)
+            intfact = integratedDipolesC0g1(&pset, muR, ix, z1, 1.0);
+            pdfval = pdfValue(pset.x1, pset.x2/z2, pow(muR,2), pdf);
+            f[0] += aux*intfact*pdfval/z2;
+            // ix = 3 (x2 = 1)
+            intfact = integratedDipolesC0g1(&pset, muR, ix, 1.0, z2);
+            pdfval = pdfValue(pset.x1/z1, pset.x2, pow(muR,2), pdf);
+            f[0] += aux*intfact*pdfval/z1;
+
+        }
     }
 
     return 0;
+}
+
+double pdfValue(double x1, double x2, double muR2, void *pdf) {
+        double f1      = (*((PDF **) pdf))->xfxQ2(2, pset.x1, pow(muR,2));
+        f1+= (*((PDF **) pdf))->xfxQ2(4, pset.x1, pow(muR,2));
+        double f2      = (*((PDF **) pdf))->xfxQ2(1, pset.x2, pow(muR,2));
+        f2+= (*((PDF **) pdf))->xfxQ2(3, pset.x2, pow(muR,2));
+        double pdfval  = f1*f2/pset.x1/pset.x2;
+        return pdfval;
 }
