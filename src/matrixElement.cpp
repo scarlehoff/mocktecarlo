@@ -270,6 +270,21 @@ double integratedDipolesC0g1(MomentumSet *pset, double scale) {
     double I = 10.0 - 7.0*pi^2/6.0;
     return 0.0;
 }
+double integratedSplitting(MomentumSet *pset, const double scale, const int ix) {
+    double rtree = C0g0WFH(pset);
+    // Insertion I
+    int i1, i2, i3, i4;
+    pset->getID(&i1, &i2, &i3, &i4);
+    // logs
+    double rs2 = pow(scale, 2);
+    double dls14 = -log(fabs(pset->s(i1,i4)/rs2));
+    double dls23 = -log(fabs(pset->s(i2,i3)/rs2));
+
+    if (ix == 1) {
+    }
+
+    return total;
+}
 
 
 // Propagators

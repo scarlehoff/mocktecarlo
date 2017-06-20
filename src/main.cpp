@@ -23,6 +23,9 @@ int main() {
    // Dimensionality
    int ndim = 9; // base, n = 6
    ndim += (NPARTICLES-6)*3; // 7: 12, 8: 15
+   if (VIRTUAL) {
+       ndim += 2
+   }
    // Error Tolerance
    double epsrel = 1e-7;
    double epsabs = 1e-7;
