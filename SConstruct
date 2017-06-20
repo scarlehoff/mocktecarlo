@@ -20,8 +20,8 @@ includeflags = []
 for i in include: 
     includeflags.append('-I' + i)
 
-source_files  = ["main.cpp", "crossSection.cpp", "MomentumSet.cpp", 
-           "phaseSpace.cpp", "FourVector.cpp", "matrixElement.cpp", "subtractionTerm.cpp"]
+source_files  = ["main.cpp", "CrossSection.cpp", "MomentumSet.cpp", 
+           "PhaseSpace.cpp", "FourVector.cpp", "MatrixElement.cpp", "SubtractionTerm.cpp"]
 source=[]
 for filename in source_files:
     source.append("src/" + filename)

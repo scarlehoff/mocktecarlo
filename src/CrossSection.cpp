@@ -27,9 +27,14 @@ int crossSection(const int *ndim, const cubareal x[], const int *ncomp, cubareal
         f[0] = 0.0;
         return 0;
     }
+    double z1, z2;
     if (VIRTUAL) {
-        double z1 = x[ncomp-1];
-        double z2 = x[ncomp-2];
+        z1 = x[*ncomp-1];
+        z2 = x[*ncomp-2];
+        if (z1 < pset.x1 || z2 < pset.x2) {
+            f[0] = 0.0;
+            return 0;
+        }
     }
 
 
@@ -106,22 +111,18 @@ int crossSection(const int *ndim, const cubareal x[], const int *ncomp, cubareal
         f[0] = mesq*flux*pset.weight*pdfval;
 
         if (VIRTUAL) { //Wait!
-            if (z1 > pset.x1 || z2 > pset.x2) {
-                // Then don't do the dipoles for this point
-                return 0;
-            }
-            double aux = flux*pset*weight;
+            double aux = flux*pset.weight;
             double intfact;
             // Then we need to run over the 3 possible regions
             // ix = 1 (x1 = 1, x2 = 1)
-            intfact = integratedDipolesC0g1(&pset, muR, ix, 1.0, 1.0);
+            intfact = integratedDipolesC0g1(&pset, muR, 1, 1.0, 1.0);
             f[0] += aux*intfact*pdfval;
             // ix = 2 (x1 = 1)
-            intfact = integratedDipolesC0g1(&pset, muR, ix, z1, 1.0);
+            intfact = integratedDipolesC0g1(&pset, muR, 2, z1, 1.0);
             pdfval = pdfValue(pset.x1, pset.x2/z2, pow(muR,2), pdf);
             f[0] += aux*intfact*pdfval/z2;
             // ix = 3 (x2 = 1)
-            intfact = integratedDipolesC0g1(&pset, muR, ix, 1.0, z2);
+            intfact = integratedDipolesC0g1(&pset, muR, 3, 1.0, z2);
             pdfval = pdfValue(pset.x1/z1, pset.x2, pow(muR,2), pdf);
             f[0] += aux*intfact*pdfval/z1;
 
@@ -132,10 +133,10 @@ int crossSection(const int *ndim, const cubareal x[], const int *ncomp, cubareal
 }
 
 double pdfValue(double x1, double x2, double muR2, void *pdf) {
-        double f1      = (*((PDF **) pdf))->xfxQ2(2, pset.x1, pow(muR,2));
-        f1+= (*((PDF **) pdf))->xfxQ2(4, pset.x1, pow(muR,2));
-        double f2      = (*((PDF **) pdf))->xfxQ2(1, pset.x2, pow(muR,2));
-        f2+= (*((PDF **) pdf))->xfxQ2(3, pset.x2, pow(muR,2));
-        double pdfval  = f1*f2/pset.x1/pset.x2;
+        double f1      = (*((PDF **) pdf))->xfxQ2(2, x1, muR2);
+        f1+= (*((PDF **) pdf))->xfxQ2(4, x1, muR2);
+        double f2      = (*((PDF **) pdf))->xfxQ2(1, x2, muR2);
+        f2+= (*((PDF **) pdf))->xfxQ2(3, x2, muR2);
+        double pdfval  = f1*f2/x1/x2;
         return pdfval;
 }

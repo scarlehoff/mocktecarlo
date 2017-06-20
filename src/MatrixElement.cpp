@@ -273,12 +273,15 @@ double integratedDipolesC0g1(MomentumSet *pset, double scale, const int ix, cons
     double dls14 = -log(fabs(pset->s(i1,i4)/rs2));
     double dls23 = -log(fabs(pset->s(i2,i3)/rs2));
     double total;
-    // Insertion I
+    // Insertion operators
+    double ics, kqq, pqq;
     switch (ix) {
-        case(1): // 1, 1
-            double Ics = 10.0 - 7.0*pow(M_PI,2)/6.0;
-        case(2): // x1, 1
-        case(3): // 1, x2
+        case 1: // 1, 1
+            ics = 10.0 - 7.0*pow(M_PI,2)/6.0;
+        case 2: // x1, 1
+            total = 0.0;
+        case 3: // 1, x2
+            total = 0.0;
     }
     return total;
 }
