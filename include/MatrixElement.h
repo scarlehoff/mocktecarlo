@@ -21,8 +21,8 @@ cplx C2g0WFHadj1m2p(int i1, int i5, int i6, int i3, int i2, int i4, MomentumSet 
 cplx C2g0WFHadj1m2m(int i1, int i5, int i6, int i3, int i2, int i4, MomentumSet *pset);
 
 // Virtual functions
-double vertexCorrectionC0g1(MomentumSet *);
-double integratedDipolesC0g1(MomentumSet *);
+double vertexCorrectionC0g1(MomentumSet *, double);
+double integratedDipolesC0g1(MomentumSet *, double);
 
 // Common
 double propagatorVBF(const double s1, const double s2, const int iboson);

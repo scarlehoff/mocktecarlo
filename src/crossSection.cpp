@@ -63,8 +63,8 @@ int crossSection(const int *ndim, const cubareal x[], const int *ncomp, cubareal
         double mesq, vfact, intfact;
         if (!ifail) {
             if (VIRTUAL) {
-                vfact = vertexCorrectionC0g1(&pset);
-                intfact = integratedDipolesC0g1(&pset);
+                vfact = vertexCorrectionC0g1(&pset, muR);
+                intfact = integratedDipolesC0g1(&pset, muR);
                 mesq = vfact - intfact;
             } else {
                 mesq = matrixElement(&pset);
@@ -91,6 +91,10 @@ int crossSection(const int *ndim, const cubareal x[], const int *ncomp, cubareal
         double average = (1.0/NC)*(1.0/NC)/4.0;
         double qcdborn = pow(4.0*M_PI*AMZ, 3)*NC*NC/2.0;
         double qcdfactor = qcdborn;
+        if (n = 6 && VIRTUAL) {
+            qcdfactor = qcdfactor*(4.0*M_PI*alpha_s)*(NC*NC-1.0)/NC ;
+            qcdfactor = qcdfactor / (8.0*pow(M_PI,2));
+        }
         if (n > 6) qcdfactor = qcdfactor*(4.0*M_PI*alpha_s)*(NC*NC-1.0)/NC ;
         if (n > 7) qcdfactor = qcdfactor*(4.0*M_PI*alpha_s)*NC/2.0;
 
