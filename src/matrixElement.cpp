@@ -245,6 +245,18 @@ cplx C2g0WFHadj1m2m(int i1, int i5, int i6, int i3, int i2, int i4, MomentumSet 
    return (z1 * z2) / zd;
 }
 
+// Virtual functions
+double vertexCorrectionC0g1(MomentumSet *pset) {
+    double rtree = C0g0WFH(pset);
+    return rtree;
+}
+
+double integratedDipolesC0g1(MomentumSet *pset) {
+    double rtree = C0g0WFH(pset);
+    return 0.0;
+}
+
+
 // Propagators
 
 double propagatorVBF(const double s1, const double s2, const int iboson) {

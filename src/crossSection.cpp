@@ -60,9 +60,15 @@ int crossSection(const int *ndim, const cubareal x[], const int *ncomp, cubareal
                 break;
         }
         // Compute Matrix Element
-        double mesq;
+        double mesq, vfact, intfact;
         if (!ifail) {
-            mesq = matrixElement(&pset);
+            if (VIRTUAL) {
+                vfact = vertexCorrectionC0g1(&pset);
+                intfact = integratedDipolesC0g1(&pset);
+                mesq = vfact - intfact;
+            } else {
+                mesq = matrixElement(&pset);
+            }
         } else {
             mesq = 0.0;
         }

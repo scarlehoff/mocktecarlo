@@ -15,7 +15,7 @@ fastjetinc = fastjetsrc + "/include"
 fastjetlf  = ["fastjettools", "fastjet", "fastjetplugins", "siscone", "siscone_spherical"]
 
 ## Generate include flags
-include = [lhapdfinc, cubaSrc + "/include", fastjetinc, "include"]
+include = [lhapdfinc, cubaSrc + "/include", fastjetinc]
 includeflags = []
 for i in include: 
     includeflags.append('-I' + i)
@@ -36,5 +36,5 @@ dbflags = ["-g", "-O2",
 ccflags = includeflags + ["-std=c++11"] # + dbflags
 
 
-env = Environment(CCFLAGS = ccflags, LIBS = libs, LIBPATH = libpath)
+env = Environment(CCFLAGS = ccflags, LIBS = libs, LIBPATH = libpath, CPPPATH="include")
 env.Program(target = target, source = source)
