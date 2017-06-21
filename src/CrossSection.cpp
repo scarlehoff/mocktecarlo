@@ -29,8 +29,8 @@ int crossSection(const int *ndim, const cubareal x[], const int *ncomp, cubareal
     }
     double z1, z2;
     if (VIRTUAL) {
-        z1 = x[*ncomp-1];
-        z2 = x[*ncomp-2];
+        z1 = x[*ndim-1];
+        z2 = x[*ndim-2];
         if (z1 < pset.x1 || z2 < pset.x2) {
             f[0] = 0.0;
             return 0;
@@ -101,6 +101,7 @@ int crossSection(const int *ndim, const cubareal x[], const int *ncomp, cubareal
         if (n = 6 && VIRTUAL) {
             qcdfactor = qcdfactor*(4.0*M_PI*alpha_s)*(NC*NC-1.0)/NC ;
             qcdfactor = qcdfactor / (8.0*pow(M_PI,2));
+            pdfval = pdfval/(1.0-pset.x1)/(1.0-pset.x2);
         }
         if (n > 6) qcdfactor = qcdfactor*(4.0*M_PI*alpha_s)*(NC*NC-1.0)/NC ;
         if (n > 7) qcdfactor = qcdfactor*(4.0*M_PI*alpha_s)*NC/2.0;
@@ -110,22 +111,22 @@ int crossSection(const int *ndim, const cubareal x[], const int *ncomp, cubareal
         // Put everything together
         f[0] = mesq*flux*pset.weight*pdfval;
 
-        if (VIRTUAL) { //Wait!
+        if (VIRTUAL && !ifail) { //Wait!
             double aux = flux*pset.weight;
             double intfact;
             // Then we need to run over the 3 possible regions
             // ix = 1 (x1 = 1, x2 = 1)
-            intfact = integratedDipolesC0g1(&pset, muR, 1, 1.0, 1.0);
+            intfact = integratedDipolesC0g1(&pset, muR, 1, z1, z2);
+            pdfval = pdfValue(pset.x1, pset.x2, pow(muR,2), pdf);
             f[0] += aux*intfact*pdfval;
             // ix = 2 (x1 = 1)
-            intfact = integratedDipolesC0g1(&pset, muR, 2, z1, 1.0);
+            intfact = integratedDipolesC0g1(&pset, muR, 2, z1, z2);
             pdfval = pdfValue(pset.x1, pset.x2/z2, pow(muR,2), pdf);
             f[0] += aux*intfact*pdfval/z2;
             // ix = 3 (x2 = 1)
-            intfact = integratedDipolesC0g1(&pset, muR, 3, 1.0, z2);
+            intfact = integratedDipolesC0g1(&pset, muR, 3, z1, z2);
             pdfval = pdfValue(pset.x1/z1, pset.x2, pow(muR,2), pdf);
             f[0] += aux*intfact*pdfval/z1;
-
         }
     }
 

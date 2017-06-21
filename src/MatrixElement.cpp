@@ -264,7 +264,9 @@ double vertexCorrectionC0g1(MomentumSet *pset, double scale) {
     return total;
 }
 
-double integratedDipolesC0g1(MomentumSet *pset, double scale, const int ix, const double x1, const double x2) {
+double integratedDipolesC0g1(MomentumSet *pset, double scale, const int ix, const double xx1, const double xx2) {
+    double x1 = xx1;
+    double x2 = xx2;
     double rtree = C0g0WFH(pset);
     int i1, i2, i3, i4;
     pset->getID(&i1, &i2, &i3, &i4);
@@ -272,18 +274,82 @@ double integratedDipolesC0g1(MomentumSet *pset, double scale, const int ix, cons
     double rs2 = pow(scale, 2);
     double dls14 = -log(fabs(pset->s(i1,i4)/rs2));
     double dls23 = -log(fabs(pset->s(i2,i3)/rs2));
-    double total;
+//    dls23 = 4.3801956656574976;
+//    dls14 = -0.47943487776582028;
+    double total = 0.0;
+    double z1 = pset->x1;
+    double z2 = pset->x2;
+    double pi2 = pow(M_PI, 2);
     // Insertion operators
-    double ics, kqq, pqq;
-    switch (ix) {
-        case 1: // 1, 1
-            ics = 10.0 - 7.0*pow(M_PI,2)/6.0;
-        case 2: // x1, 1
-            total = 0.0;
-        case 3: // 1, x2
-            total = 0.0;
+    int antenna = 1;
+    if (antenna) {
+//        z2 = 0.12190765265928201;
+//        z1 = 6.1001586905563530E-003;
+//        x2 = 0.60743837005012802;
+//        x1 = 0.56845142508152535;
+//        z1 = 8.5132577035339566E-003;
+//        z2 = 0.51985205836236692;
+//        x1 = 0.95580243388760533;
+//        x2 = 0.61075662779675721;
+        double a1=0., a1u=0., a1l=0.;
+        double c1zl=0., c1zu=0.;
+        double c1u=0., c1l=0.;
+        double bx=0., cx=0.;
+        double omz1 = 1.0 - z1;
+        double omx1 = 1.0 - x1;
+        double d0x1 = 1.0/omx1;
+        double d1x1 = log(omx1)/omx1;
+        double omz2 = 1.0 - z2;
+        double omx2 = 1.0 - x2;
+        double d0x2 = 1.0/omx2;
+        double d1x2 = log(omx2)/omx2;
+        switch (ix) {
+            case 1: // 1, 1
+                a1 = (7.0 - pi2)/4.0 ;
+                a1u = a1 + 3.0*dls14/4.0 + pow(dls14,2)/2.0;
+                a1l = a1 + 3.0*dls23/4.0 + pow(dls23,2)/2.0;
+                // A(1)/(1-z)
+                total = (a1u + a1l)/omz1/omz2;
+                c1zu = (-3.0/4.0 + log(omz1)/2.0 - dls14)*log(omz1);
+                c1zl = (-3.0/4.0 + log(omz2)/2.0 - dls23)*log(omz2);
+                // C(1)*ln(1-z)/(1-z)
+                total += (c1zu+c1zl)/omz1/omz2;
+                c1u = d0x1*(-3.0/4.0 - dls14) + d1x1;
+                c1l = d0x2*(-3.0/4.0 - dls23) + d1x2;
+                // C(1)*Dn(1-x)
+                total -= c1u/omz2 + c1l/omz1;
+                break;
+            case 2: // x1, 1
+                bx = log(x2)*( (1.0+x2)/2.0 - 1.0/omx2 );
+                bx += -log(omx2)*(1.0+x2)/2.0;
+                bx += (3.0 - x2 + dls23 +x2*dls23)/2.0;
+                cx = d0x2*(-3.0/4.0 - dls23);
+                cx += d1x2;
+                total = (bx + cx)/omz1;
+                break;
+            case 3: // 1, x2
+                bx = log(x1)*( (1.0+x1)/2.0 - 1.0/omx1 );
+                bx += -log(omx1)*(1.0+x1)/2.0;
+                bx += (3.0 - x1 + dls14 +x1*dls14)/2.0;
+                cx = d0x1*(-3.0/4.0 - dls14);
+                cx += d1x1;
+                total = (bx + cx)/omz2;
+                break;
+        }
+//        std :: cout << "ix: " << ix << " |total: " << -total << std::endl;
+//        std :: cin.get();
+    } else {
+        double ics, kqq, pqq;
+        switch (ix) {
+            case 1: // 1, 1
+                ics = 10.0 - 7.0*pow(M_PI,2)/6.0;
+            case 2: // x1, 1
+                total = 0.0;
+            case 3: // 1, x2
+                total = 0.0;
+        }
     }
-    return total;
+    return (total)*rtree;
 }
 
 // Propagators

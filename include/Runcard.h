@@ -10,7 +10,7 @@
 // Jet definition
 #define MINJETS_ 2
 #define RKT_ 0.5
-#define PTCUT_ 0
+#define PTCUT_ 0.0
 
 // Parameters
 #define VIRTUAL 1
