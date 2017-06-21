@@ -281,8 +281,9 @@ double integratedDipolesC0g1(MomentumSet *pset, double scale, const int ix, cons
     double z2 = pset->x2;
     double pi2 = pow(M_PI, 2);
     // Insertion operators
-    int antenna = 1;
-    if (antenna) {
+    int subtraction = 0;
+    if (subtraction == 0) { 
+        /* Antenna subtraction */
 //        z2 = 0.12190765265928201;
 //        z1 = 6.1001586905563530E-003;
 //        x2 = 0.60743837005012802;
@@ -319,7 +320,7 @@ double integratedDipolesC0g1(MomentumSet *pset, double scale, const int ix, cons
                 // C(1)*Dn(1-x)
                 total -= c1u/omz2 + c1l/omz1;
                 break;
-            case 2: // x1, 1
+            case 2: // 1, x2
                 bx = log(x2)*( (1.0+x2)/2.0 - 1.0/omx2 );
                 bx += -log(omx2)*(1.0+x2)/2.0;
                 bx += (3.0 - x2 + dls23 +x2*dls23)/2.0;
@@ -327,7 +328,7 @@ double integratedDipolesC0g1(MomentumSet *pset, double scale, const int ix, cons
                 cx += d1x2;
                 total = (bx + cx)/omz1;
                 break;
-            case 3: // 1, x2
+            case 3: // x1, 1
                 bx = log(x1)*( (1.0+x1)/2.0 - 1.0/omx1 );
                 bx += -log(omx1)*(1.0+x1)/2.0;
                 bx += (3.0 - x1 + dls14 +x1*dls14)/2.0;
@@ -338,15 +339,30 @@ double integratedDipolesC0g1(MomentumSet *pset, double scale, const int ix, cons
         }
 //        std :: cout << "ix: " << ix << " |total: " << -total << std::endl;
 //        std :: cin.get();
-    } else {
+    } else if (subtraction == 1) {
+        /* CS paper, DIS example 
+         * ics  = (10.0 - 7.0*pow(M_PI,2)/6.0) dd + dls
+         * kqq  = 2D1 - 2D0*log(x) - (1+x)*(log(1-x)-log(x)) + (1-x) -dd*(5-pi^2)
+         * rest = -3/2*D0 + 3/2*dd - Pqq*(log(x/z???) + log(muF/Q2))
+        */
         double ics, kqq, pqq;
+        double a1, c1, cz1;
         switch (ix) {
             case 1: // 1, 1
-                ics = 10.0 - 7.0*pow(M_PI,2)/6.0;
-            case 2: // x1, 1
+                icsl = 10.0 - 7.0*pi2/6.0;
+                icsu = 10.0 - 7.0*pi2/6.0;
+                kqq = -(5.0 - pi2);
+                total = (ics + kqq)/omz1/omz2; 
+                cz = 0.0; // D0 + D1
+                pqq += 0.0; // Pqq
                 total = 0.0;
-            case 3: // 1, x2
+                break;
+            case 2: // 1, x2
                 total = 0.0;
+                break;
+            case 3: // x1, 1
+                total = 0.0;
+                break;
         }
     }
     return (total)*rtree;
