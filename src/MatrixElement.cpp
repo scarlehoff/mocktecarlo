@@ -1,6 +1,8 @@
 #include "MomentumSet.h"
 #include "MatrixElement.h"
 #include <iostream>
+// dilogarithm
+#include <gsl/gsl_sf_dilog.h>
 
 double matrixElement(MomentumSet *pset) {
     switch (pset->npar) {
@@ -274,16 +276,16 @@ double integratedDipolesC0g1(MomentumSet *pset, double scale, const int ix, cons
     double rs2 = pow(scale, 2);
     double dls14 = -log(fabs(pset->s(i1,i4)/rs2));
     double dls23 = -log(fabs(pset->s(i2,i3)/rs2));
+//    dls14 = 0.0 ; dls23 = 0.0;
 //    dls23 = 4.3801956656574976;
 //    dls14 = -0.47943487776582028;
     double total = 0.0;
     double z1 = pset->x1;
     double z2 = pset->x2;
     double pi2 = pow(M_PI, 2);
-    // Insertion operators
-    int subtraction = 0;
-    if (subtraction == 0) { 
-        /* Antenna subtraction */
+    // subtraction type
+    int subtraction = 1;
+    // Auxiliary definitions
 //        z2 = 0.12190765265928201;
 //        z1 = 6.1001586905563530E-003;
 //        x2 = 0.60743837005012802;
@@ -292,32 +294,35 @@ double integratedDipolesC0g1(MomentumSet *pset, double scale, const int ix, cons
 //        z2 = 0.51985205836236692;
 //        x1 = 0.95580243388760533;
 //        x2 = 0.61075662779675721;
+    double omz1 = 1.0 - z1;
+    double omx1 = 1.0 - x1;
+    double d0x1 = 1.0/omx1;
+    double d1x1 = log(omx1)/omx1;
+    double omz2 = 1.0 - z2;
+    double omx2 = 1.0 - x2;
+    double d0x2 = 1.0/omx2;
+    double d1x2 = log(omx2)/omx2;
+    if (subtraction == 0) { 
+        /* Antenna subtraction */
         double a1=0., a1u=0., a1l=0.;
         double c1zl=0., c1zu=0.;
         double c1u=0., c1l=0.;
         double bx=0., cx=0.;
-        double omz1 = 1.0 - z1;
-        double omx1 = 1.0 - x1;
-        double d0x1 = 1.0/omx1;
-        double d1x1 = log(omx1)/omx1;
-        double omz2 = 1.0 - z2;
-        double omx2 = 1.0 - x2;
-        double d0x2 = 1.0/omx2;
-        double d1x2 = log(omx2)/omx2;
+
         switch (ix) {
             case 1: // 1, 1
+                // A(1)/(1-z)
                 a1 = (7.0 - pi2)/4.0 ;
                 a1u = a1 + 3.0*dls14/4.0 + pow(dls14,2)/2.0;
                 a1l = a1 + 3.0*dls23/4.0 + pow(dls23,2)/2.0;
-                // A(1)/(1-z)
                 total = (a1u + a1l)/omz1/omz2;
+                // C(1)*ln(1-z)/(1-z)
                 c1zu = (-3.0/4.0 + log(omz1)/2.0 - dls14)*log(omz1);
                 c1zl = (-3.0/4.0 + log(omz2)/2.0 - dls23)*log(omz2);
-                // C(1)*ln(1-z)/(1-z)
                 total += (c1zu+c1zl)/omz1/omz2;
+                // C(1)*Dn(1-x)
                 c1u = d0x1*(-3.0/4.0 - dls14) + d1x1;
                 c1l = d0x2*(-3.0/4.0 - dls23) + d1x2;
-                // C(1)*Dn(1-x)
                 total -= c1u/omz2 + c1l/omz1;
                 break;
             case 2: // 1, x2
@@ -345,25 +350,63 @@ double integratedDipolesC0g1(MomentumSet *pset, double scale, const int ix, cons
          * kqq  = 2D1 - 2D0*log(x) - (1+x)*(log(1-x)-log(x)) + (1-x) -dd*(5-pi^2)
          * rest = -3/2*D0 + 3/2*dd - Pqq*(log(x/z???) + log(muF/Q2))
         */
-        double ics, kqq, pqq;
-        double a1, c1, cz1;
+        double a1=0., a1u=0., a1l=0.;
+        double c1zl=0., c1zu=0.;
+        double c1u=0., c1l=0.;
+        double bx=0., cx=0.;
+//        if(ix==1) std :: cout << "-------------" << std::endl;
         switch (ix) {
             case 1: // 1, 1
-                icsl = 10.0 - 7.0*pi2/6.0;
-                icsu = 10.0 - 7.0*pi2/6.0;
-                kqq = -(5.0 - pi2);
-                total = (ics + kqq)/omz1/omz2; 
-                cz = 0.0; // D0 + D1
-                pqq += 0.0; // Pqq
-                total = 0.0;
+                // A(1)/(1-z)
+                a1 = 7.0/2.0 - pi2/6.0;
+                a1u = a1 + 3.0*dls14/2.0 + pow(dls14,2)/1.0;
+                a1l = a1 + 3.0*dls23/2.0 + pow(dls23,2)/1.0;
+                total = (a1u + a1l)/omz1/omz2;
+                // C(1)*ln(1-z)/(1-z)
+                c1zu = helperC1(z1);
+                c1zu += -2.0*log(omz1)*dls14;
+                c1zu += pow(log(omz1),2);
+                c1zl = helperC1(z2);
+                c1zl += -2.0*log(omz2)*dls23;
+                c1zl += pow(log(omz2),2);
+                total += (c1zu+c1zl)/omz1/omz2;
+                // C(1)*Dn(1-x)
+                c1u = d0x1*(3.0/2.0); 
+                c1u += d0x1*dls14*2.0;
+                c1u += d0x1*(2.0*log(z1));
+                c1u += -2.0*d1x1;    
+                c1l = d0x2*(3.0/2.0);
+                c1l += d0x2*dls23*2.0;
+                c1l += d0x2*(2.0*log(z2));
+                c1l += -2.0*d1x2;
+                total += c1u/omz2 + c1l/omz1;
                 break;
             case 2: // 1, x2
-                total = 0.0;
+                bx = omx2 - (1.0+x2)*log(omx2/x2);
+                bx += (dls23 +x2*dls23);
+                cx = d0x2*(-3./2.0);
+                cx += d0x2*(-2.*log(x2));
+                cx += log(z2)*( (1.0+x2) - 2.0*d0x2 );
+                cx += 2.*log(x2)*d0x2*( 1.0 + pow(x2,2) );
+                cx += 2.0*d1x2;
+                cx += -d0x2*dls23*2.0;
+                total = (bx+cx)/omz1;
                 break;
             case 3: // x1, 1
-                total = 0.0;
+                bx = omx1 - (1.0+x1)*log(omx1/x1);
+                bx += (dls14 +x1*dls14);
+                cx = d0x1*(-3./2.0);
+                cx += d0x1*(-2.*log(x1));
+                cx += log(z1)*( (1.0+x1) - 2.0*d0x1 );
+                cx += 2.*log(x1)*d0x1*( 1.0 + pow(x1,2) );
+                cx += 2.0*d1x1;
+                cx += -d0x1*dls14*2.0;
+                total = (bx+cx)/omz2;
                 break;
         }
+//        std :: cout << "ix: " << ix << " |total: " << total/2. << std::endl;
+//        std :: cin.get();
+        total = total / 2.0;
     }
     return (total)*rtree;
 }
@@ -388,5 +431,24 @@ double propagator(const double s, const double mass, const double width) {
     double t1 = pow(s - mass*mass, 2);
     double t2 = pow(mass*width, 2);
     return t1 + t2;
+}
+
+double helperC1(double x) {
+    double li2 = gsl_sf_dilog(1.0 - x);
+    double total = -3.0*log(1.-x)/2.0;
+    total += 2.0*li2 - pow(M_PI,2)/3.0;
+//    total += -log(x)*(x + pow(x,2)/2.0 + 2.0*log(1.0-x));
+    total += -4.0*li2 + 4.0*pow(M_PI,2)/6.0 - x/4.*(-x+2.*(x+2.)*log(x)-4.);
+    return total;
+
+//    double li2 = gsl_sf_dilog(1.0 - x);
+//    double lnx = log(x);
+//    double lnomx = log(1.0-x);
+//
+//    double total;
+//    total = 4.*li2 + x*(x+4.)/4. - x*(x-2.)*lnx/2. -3.*lnomx/2.0;
+//    total += lnx*(2.*lnomx + x*x/2. + x - 3.);
+//    total += -4.*pow(M_PI,2)/6. - 3.*lnx;
+//    return total;
 }
 

@@ -27,7 +27,7 @@ for filename in source_files:
     source.append("src/" + filename)
 
 libpath = [cubaSrc + "/lib", lhapdflib, fastjetlib]
-libs    = ['cuba', 'm', 'LHAPDF'] + fastjetlf
+libs    = ['cuba', 'm', 'LHAPDF', 'gsl', 'gslcblas'] + fastjetlf
 # debug
 dbflags = ["-g", "-O2", 
 #            "-Q", # will show which function is causing it to crash

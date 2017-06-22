@@ -29,3 +29,4 @@ double integratedDipolesC0g1(MomentumSet *, double, const int, const double, con
 double propagatorVBF(const double s1, const double s2, const int iboson);
 double propagatorWFH(const double s1, const double s2);
 double propagator(const double s, const double mass, const double width);
+double helperC1(double x);
