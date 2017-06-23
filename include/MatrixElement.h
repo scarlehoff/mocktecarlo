@@ -30,3 +30,6 @@ double propagatorVBF(const double s1, const double s2, const int iboson);
 double propagatorWFH(const double s1, const double s2);
 double propagator(const double s, const double mass, const double width);
 double helperC1(double x);
+double csI0(const double x, const double z, const int ix);
+double csI1(const double x, const double z, const int ix);
+double csI2(const double x, const double z, const int ix);

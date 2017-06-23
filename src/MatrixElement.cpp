@@ -284,7 +284,7 @@ double integratedDipolesC0g1(MomentumSet *pset, double scale, const int ix, cons
     double z2 = pset->x2;
     double pi2 = pow(M_PI, 2);
     // subtraction type
-    int subtraction = 1;
+    int subtraction = 3;
     // Auxiliary definitions
 //        z2 = 0.12190765265928201;
 //        z1 = 6.1001586905563530E-003;
@@ -302,13 +302,12 @@ double integratedDipolesC0g1(MomentumSet *pset, double scale, const int ix, cons
     double omx2 = 1.0 - x2;
     double d0x2 = 1.0/omx2;
     double d1x2 = log(omx2)/omx2;
+    double a1=0., a1u=0., a1l=0.;
+    double c1zl=0., c1zu=0.;
+    double c1u=0., c1l=0.;
+    double bx=0., cx=0.;
     if (subtraction == 0) { 
         /* Antenna subtraction */
-        double a1=0., a1u=0., a1l=0.;
-        double c1zl=0., c1zu=0.;
-        double c1u=0., c1l=0.;
-        double bx=0., cx=0.;
-
         switch (ix) {
             case 1: // 1, 1
                 // A(1)/(1-z)
@@ -350,10 +349,6 @@ double integratedDipolesC0g1(MomentumSet *pset, double scale, const int ix, cons
          * kqq  = 2D1 - 2D0*log(x) - (1+x)*(log(1-x)-log(x)) + (1-x) -dd*(5-pi^2)
          * rest = -3/2*D0 + 3/2*dd - Pqq*(log(x/z???) + log(muF/Q2))
         */
-        double a1=0., a1u=0., a1l=0.;
-        double c1zl=0., c1zu=0.;
-        double c1u=0., c1l=0.;
-        double bx=0., cx=0.;
 //        if(ix==1) std :: cout << "-------------" << std::endl;
         switch (ix) {
             case 1: // 1, 1
@@ -407,6 +402,90 @@ double integratedDipolesC0g1(MomentumSet *pset, double scale, const int ix, cons
 //        std :: cout << "ix: " << ix << " |total: " << total/2. << std::endl;
 //        std :: cin.get();
         total = total / 2.0;
+    } else if (subtraction == 2) {
+        switch (ix) {
+            case 1: // 1, 1
+                // A(1)/(1-z)
+                a1 = 7.0/2.0 - 3.0*pi2/6.0;
+                a1u = a1 + 3.0*dls14/2.0 + pow(dls14,2)/1.0;
+                a1l = a1 + 3.0*dls23/2.0 + pow(dls23,2)/1.0;
+                total = (a1u + a1l)/omz1/omz2;
+                // C(1)*ln(1-z)/(1-z)
+                c1zu = -3.0/2.0*log(omz1);
+                c1zu += -2.0*log(omz1)*dls14;
+                c1zu += pow(log(omz1),2);
+                c1zl = -3.0/2.0*log(omz2);
+                c1zl += -2.0*log(omz2)*dls23;
+                c1zl += pow(log(omz2),2);
+                total += (c1zu+c1zl)/omz1/omz2;
+                // C(1)*Dn(1-x)
+                c1u = d0x1*(3.0/2.0); 
+                c1u += d0x1*dls14*2.0;
+                c1u += -2.0*d1x1;    
+                c1l = d0x2*(3.0/2.0);
+                c1l += d0x2*dls23*2.0;
+                c1l += -2.0*d1x2;
+                total += c1u/omz2 + c1l/omz1;
+                break;
+            case 2: // 1, x2
+                bx = omx2 - (1.0+x2)*log(omx2);
+                bx += (dls23 +x2*dls23);
+                cx = d0x2*(-3./2.0);
+                cx += 2.0*d1x2;
+                cx += -d0x2*dls23*2.0;
+                total = (bx+cx)/omz1;
+                break;
+            case 3: // x1, 1
+                bx = omx1 - (1.0+x1)*log(omx1);
+                bx += (dls14 +x1*dls14);
+                cx = d0x1*(-3./2.0);
+                cx += 2.0*d1x1;
+                cx += -d0x1*dls14*2.0;
+                total = (bx+cx)/omz2;
+                break;
+        }
+//        std :: cout << "ix: " << ix << " |total: " << total/2. << std::endl;
+//        std :: cin.get();
+        total = total / 2.0;
+    } else if (subtraction == 3) {
+        double i1 = 0.0, i2 = 0.0, i3 = 0.0;
+        double scale = 0.0;
+        switch (ix) {
+            case 1:
+                i1  = csI0(x1, z1, ix)/omz2;
+                i1 += csI0(x2, z2, ix)/omz1;
+                i2  = csI1(x1, z1, ix)/omz2;
+                i2 += csI1(x2, z2, ix)/omz1;
+                i3  = csI2(x1, z1, ix)/omz2;
+                i3 += csI2(x2, z2, ix)/omz1;
+                scale = 3.0*dls14/2.0 + pow(dls14,2);
+                scale += 3.0*dls23/2.0 + pow(dls23,2);
+                scale += -2.0*log(omz1)*dls14;
+                scale += -2.0*log(omz2)*dls23;
+                scale = scale/omz1/omz2;
+                scale += 2.0*(d0x1*dls14/omz2 + d0x2*dls23/omz1);
+                break;
+            case 2:
+                i1 = csI0(x2, z2, ix)/omz1;
+                i2 = csI1(x2, z2, ix)/omz1;
+                i3 = csI2(x2, z2, ix)/omz1;
+                scale = dls23 + x2*dls23;
+                scale += -2.0*dls23*d0x2;
+                scale = scale/omz1;
+                break;
+            case 3:
+                i1 = csI0(x1, z1, ix)/omz2;
+                i2 = csI1(x1, z1, ix)/omz2;
+                i3 = csI2(x1, z1, ix)/omz2;
+                scale = dls14 + x1*dls14;
+                scale += -2.0*dls14*d0x1;
+                scale = scale/omz2;
+                break;
+        }
+        total = (i1 + i2 + i3) / 2.0;
+        total += scale / 2.0;
+//        std :: cout << "ix: " << ix << " |total: " << total << std::endl;
+//        std :: cin.get();
     }
     return (total)*rtree;
 }
@@ -440,15 +519,50 @@ double helperC1(double x) {
 //    total += -log(x)*(x + pow(x,2)/2.0 + 2.0*log(1.0-x));
     total += -4.0*li2 + 4.0*pow(M_PI,2)/6.0 - x/4.*(-x+2.*(x+2.)*log(x)-4.);
     return total;
-
-//    double li2 = gsl_sf_dilog(1.0 - x);
-//    double lnx = log(x);
-//    double lnomx = log(1.0-x);
-//
-//    double total;
-//    total = 4.*li2 + x*(x+4.)/4. - x*(x-2.)*lnx/2. -3.*lnomx/2.0;
-//    total += lnx*(2.*lnomx + x*x/2. + x - 3.);
-//    total += -4.*pow(M_PI,2)/6. - 3.*lnx;
-//    return total;
 }
 
+double csI0(const double x, const double z, const int ix) {
+    double a = 0.0, b = 0.0, c = 0.0;
+    double omz = 1.0-z;
+    if (ix == 1) {
+        a = (10.0 - 7.0*pow(M_PI,2)/6.0)/omz;
+    }
+    return a + b + c;
+}
+
+double csI1(const double x, const double z, const int ix) {
+    double a = 0.0, b = 0.0, c = 0.0;
+    double omz = 1.0-z;
+    double lz  = log(omz);
+    double omx = 1.0-x;
+    double d0x = 1.0/omx;
+    double d1x = log(omx)/omx;
+    if (ix == 1) {
+        a = (-3.0/2.0)/omz;
+        c = -3.0*lz/omz/2.0 - pow(lz,2)/omz;
+        c += -(-3.0/2.0*d0x - 2.0*d1x);
+    } else {
+        b = 2.0*log(2.0-x)/omx;
+        c = d0x*(-3.0/2.0) + d1x*(-2.0);
+    }
+    return a + b + c;;
+}
+
+double csI2(const double x, const double z, const int ix) {
+    double a = 0.0, b = 0.0, c = 0.0;
+    double omz = 1.0-z;
+    double lz  = log(omz);
+    double omx = 1.0-x;
+    double d0x = 1.0/omx;
+    double d1x = log(omx)/omx;
+    if (ix == 1) {
+        a = (2.0/3.0*pow(M_PI,2) - 5)/omz;
+        c = 2.0*pow(lz,2)/omz ;
+        c += - 4.0*d1x;
+    } else {
+        b = -2.0*log(2.0-x)/omx + omx - (1.0+x)*log(omx);
+        b += log(x) * (1.0 + x - 2.0/omx);
+        c = 4.0*d1x;
+    }
+    return a + b + c;;
+}

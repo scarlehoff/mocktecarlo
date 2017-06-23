@@ -18,7 +18,8 @@ using namespace LHAPDF;
 int crossSection(const int *ndim, const cubareal x[], const int *ncomp, cubareal f[], void *pdf) {
     int n        = NPARTICLES;
     double roots = ROOTS_;
-    double muR   = SCALE_; // muR = muF = mH
+    double muR   = SCALE_; // muR = muF 
+    double muF   = SCALE_;
     double s     = pow(roots, 2);
 
     // Generate phase space point from cuba x[]
@@ -90,7 +91,7 @@ int crossSection(const int *ndim, const cubareal x[], const int *ncomp, cubareal
         }
 
         // Compute the PDFs for a u(c) d(s) interaction
-        double pdfval = pdfValue(pset.x1, pset.x2, pow(muR,2), pdf);
+        double pdfval = pdfValue(pset.x1, pset.x2, pow(muF,2), pdf);
         double alpha_s = (*((PDF **) pdf))->alphasQ2(pow(muR,2));
 
 
@@ -99,6 +100,7 @@ int crossSection(const int *ndim, const cubareal x[], const int *ncomp, cubareal
         double qcdborn = pow(4.0*M_PI*AMZ, 3)*NC*NC/2.0;
         double qcdfactor = qcdborn;
         if (n = 6 && VIRTUAL) {
+//            cout << "alpha_S: " << alpha_s << endl;
             qcdfactor = qcdfactor*(4.0*M_PI*alpha_s)*(NC*NC-1.0)/NC ;
             qcdfactor = qcdfactor / (8.0*pow(M_PI,2));
             pdfval = pdfval/(1.0-pset.x1)/(1.0-pset.x2);
@@ -117,15 +119,15 @@ int crossSection(const int *ndim, const cubareal x[], const int *ncomp, cubareal
             // Then we need to run over the 3 possible regions
             // ix = 1 (x1 = 1, x2 = 1)
             intfact = integratedDipolesC0g1(&pset, muR, 1, z1, z2);
-            pdfval = pdfValue(pset.x1, pset.x2, pow(muR,2), pdf);
+            pdfval = pdfValue(pset.x1, pset.x2, pow(muF,2), pdf);
             f[0] += aux*intfact*pdfval;
             // ix = 2 (x1 = 1)
             intfact = integratedDipolesC0g1(&pset, muR, 2, z1, z2);
-            pdfval = pdfValue(pset.x1, pset.x2/z2, pow(muR,2), pdf);
+            pdfval = pdfValue(pset.x1, pset.x2/z2, pow(muF,2), pdf);
             f[0] += aux*intfact*pdfval/z2;
             // ix = 3 (x2 = 1)
             intfact = integratedDipolesC0g1(&pset, muR, 3, z1, z2);
-            pdfval = pdfValue(pset.x1/z1, pset.x2, pow(muR,2), pdf);
+            pdfval = pdfValue(pset.x1/z1, pset.x2, pow(muF,2), pdf);
             f[0] += aux*intfact*pdfval/z1;
         }
     }
