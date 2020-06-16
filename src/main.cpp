@@ -21,8 +21,9 @@ int main() {
    char statefile[7] = "";
 //   char statefile[7] = "status";
    // Dimensionality
-   int ndim = 9; // base, n = 6
-   ndim += (NPARTICLES-6)*3; // 7: 12, 8: 15
+   // int ndim = 9; // base, n = 6
+   // ndim += (NPARTICLES-6)*3; // 7: 12, 8: 15
+   int ndim = 3*(NPARTICLES-2) - 3;
    if (VIRTUAL) {
        ndim += 2;
    }
